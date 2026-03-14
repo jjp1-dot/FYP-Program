@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FYP Assessment Result</title>
+<style>
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f6f8;
+    text-align: center;
+    padding: 60px 20px;
+}
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+/* Flex layout for result and chart side-by-side */
+.results-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 50px;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.result-details {
+    flex: 1 1 350px;
+    max-width: 400px;
+}
+
+.dialogue-box {
+    background-color: #e0f2fe;
+    padding: 15px 20px;
+    border-left: 6px solid #2563eb;
+    margin-bottom: 20px;
+    font-size: 18px;
+    border-radius: 6px;
+}
+
+.result-details h2 {
+    font-size: 28px;
+    color: #2563eb;
+    margin-bottom: 15px;
+}
+
+.result-details ul {
+    font-size: 18px;
+    padding-left: 20px;
+}
+
+.chart-container {
+    flex: 1 1 350px;
+    max-width: 350px;
+    text-align: center;
+}
+
+.pie-chart {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    margin: 0 auto 30px auto;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+/* donut hole */
+.pie-chart::before {
+    content: "";
+    display: block;
+    width: 140px;
+    height: 140px;
+    background: #f5f6f8;
+    border-radius: 50%;
+    position: absolute;
+    top: 80px;
+    left: 80px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+.legend {
+    max-width: 300px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.legend-color {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    margin-right: 12px;
+}
+
+button {
+    margin-top: 40px;
+    padding: 12px 28px;
+    font-size: 16px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+}
+button:hover {
+    background: #1e4fd6;
+}
+
+/* Category colors */
+.legend-tech { background-color: #3b82f6; }
+.legend-health { background-color: #10b981; }
+.legend-education { background-color: #f59e0b; }
+.legend-business { background-color: #ef4444; }
+.legend-creative { background-color: #db2777; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Your Assessment Result</h1>
+
+    <div class="results-wrapper">
+        <div class="result-details" id="resultContainer">
+          <!-- Top category + programs inserted here -->
+        </div>
+
+        <div class="chart-container">
+            <div id="pieChart" class="pie-chart"></div>
+            <div class="legend" id="legend"></div>
+        </div>
+    </div>
+
+    <button onclick="window.location.href='index.html'">Restart Assessment</button>
+</div>
+
+<script>
+window.onload = function() {
+    // Retrieve answers
+    let answers = JSON.parse(localStorage.getItem('answers')) || [];
+
+    // Category scores and program mappings
+    const scores = {
+        "Technology": 0,
+        "Health & Science": 0,
+        "Education & Social Science": 0,
+        "Business": 0,
+        "Creative & Media": 0
+    };
+
+    const programMap = {
+        "Technology": ["Computer Science", "Information Technology", "Software Engineering"],
+        "Health & Science": ["Nursing", "Biology", "Medical Technology"],
+        "Education & Social Science": ["Education", "Psychology", "Communication"],
+        "Business": ["Business Administration", "Marketing", "Entrepreneurship"],
+        "Creative & Media": ["Multimedia Arts", "Graphic Design", "Film & Media"]
+    };
+
+    const colorMap = {
+        "Technology": "#3b82f6",
+        "Health & Science": "#10b981",
+        "Education & Social Science": "#f59e0b",
+        "Business": "#ef4444",
+        "Creative & Media": "#db2777"
+    };
+
+    // Tally the answers
+    answers.forEach(a => {
+        if (a === "A") scores["Technology"]++;
+        else if (a === "B") scores["Health & Science"]++;
+        else if (a === "C") scores["Education & Social Science"]++;
+        else if (a === "D") scores["Business"]++;
+        else if (a === "E") scores["Creative & Media"]++;
+    });
+
+    // Find top category (highest score)
+    const sortedCategories = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+    const topCategory = sortedCategories[0];
+
+    // Display top category and its programs with dialogue
+    const resultContainer = document.getElementById("resultContainer");
+    resultContainer.innerHTML = `
+        <div class="dialogue-box">Based on your answers, your most suitable field is:</div>
+        <h2>${topCategory} (${scores[topCategory]} pts)</h2>
+        <ul>
+            ${programMap[topCategory].map(p => `<li>${p}</li>`).join('')}
+        </ul>
+    `;
+
+    // Prepare pie chart slices
+    const total = Object.values(scores).reduce((a,b) => a + b, 0) || 1;
+
+    let accPercent = 0;
+    let slices = [];
+    for (const [cat, val] of Object.entries(scores)) {
+        const percent = (val / total) * 100;
+        slices.push({ color: colorMap[cat], start: accPercent, end: accPercent + percent });
+        accPercent += percent;
+    }
+
+    // Build CSS conic-gradient string
+    let gradient = 'conic-gradient(' + slices.map(s => `${s.color} ${s.start}% ${s.end}%`).join(', ') + ')';
+    document.getElementById('pieChart').style.background = gradient;
+
+    // Build legend
+    const legend = document.getElementById("legend");
+    legend.innerHTML = '';
+    for (const [cat, val] of Object.entries(scores)) {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+
+        const colorBox = document.createElement('div');
+        colorBox.className = 'legend-color';
+        colorBox.style.backgroundColor = colorMap[cat];
+
+        const label = document.createElement('div');
+        label.textContent = `${cat} — ${val} pts`;
+
+        item.appendChild(colorBox);
+        item.appendChild(label);
+        legend.appendChild(item);
+    }
+}
+</script>
+
+</body>
+</html>
