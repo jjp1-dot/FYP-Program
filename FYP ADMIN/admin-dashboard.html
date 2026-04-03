@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="admin-container">
+    <div class="sidebar">
+        <div class="logo"><h2><i class="fas fa-graduation-cap"></i> FYP : ADMIN</h2><p>College Recommender</p></div>
+        <div class="nav">
+            <a href="admin-dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+            <a href="admin-questions.html" class="nav-item"><i class="fas fa-question-circle"></i><span>Questions</span></a>
+            <a href="admin-schools.html" class="nav-item"><i class="fas fa-school"></i><span>Schools</span></a>
+            <a href="admin-cms.html" class="nav-item"><i class="fas fa-palette"></i><span>CMS</span></a>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title"><h1>Dashboard</h1><p>Program recommendation analytics</p></div>
+            <div class="admin-profile"><span>Admin</span><div class="avatar">A</div><button onclick="logout()" style="background:#e11d48;">Logout</button></div>
+        </div>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="row">
+            <div class="card"><h3><i class="fas fa-venus-mars"></i> Gender Distribution</h3><canvas id="genderChart"></canvas></div>
+            <div class="card"><h3><i class="fas fa-trophy"></i> Top Recommended Programs</h3><div id="programRanking"></div></div>
+        </div>
+        <div class="row">
+            <div class="card"><h3><i class="fas fa-chart-line"></i> Category Interest</h3><canvas id="categoryChart"></canvas></div>
+            <div class="card"><h3><i class="fas fa-user-check"></i> Total Students Guided</h3><div id="totalAssessments" style="font-size:3rem; font-weight:800;">0</div><p>Average age: <span id="avgAge">—</span></p></div>
+        </div>
+    </div>
+</div>
+<script src="admin.js"></script>
+<script>
+    const mockData = {
+        totalAssessments: 847, averageAge: 20.4,
+        genderDistribution: { male: 412, female: 398, other: 37 },
+        topRecommendedPrograms: [
+            { name: "BS Information Technology", count: 267, category: "Technology" },
+            { name: "BS Nursing", count: 198, category: "Healthcare" },
+            { name: "BS Education", count: 144, category: "Education" },
+            { name: "BS Business Administration", count: 112, category: "Business" },
+            { name: "BS Multimedia Arts", count: 86, category: "Creative Arts" }
+        ],
+        categoryInterest: [
+            { category: "Technology", percentage: 32 },
+            { category: "Healthcare", percentage: 28 },
+            { category: "Education", percentage: 18 },
+            { category: "Business", percentage: 14 },
+            { category: "Creative Arts", percentage: 8 }
+        ],
+        mostRecommendedCategory: "Technology"
+    };
+    function renderStats() {
+        document.getElementById('statsGrid').innerHTML = `
+            <div class="stat-card"><div class="stat-title">Total Assessments</div><div class="stat-value">${mockData.totalAssessments}</div></div>
+            <div class="stat-card"><div class="stat-title">Average Age</div><div class="stat-value">${mockData.averageAge} yrs</div></div>
+            <div class="stat-card"><div class="stat-title">Top Category</div><div class="stat-value">${mockData.mostRecommendedCategory}</div></div>
+        `;
+        document.getElementById('totalAssessments').innerText = mockData.totalAssessments;
+        document.getElementById('avgAge').innerText = mockData.averageAge;
+    }
+    function initGenderChart() {
+        new Chart(document.getElementById('genderChart'), {
+            type: 'doughnut',
+            data: { labels: ['Male','Female','Other'], datasets: [{ data: [412,398,37], backgroundColor: ['#3b82f6','#f472b6','#94a3b8'] }] },
+            options: { responsive: true }
+        });
+    }
+    function initCategoryChart() {
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'bar',
+            data: { labels: mockData.categoryInterest.map(c=>c.category), datasets: [{ label: 'Interest (%)', data: mockData.categoryInterest.map(c=>c.percentage), backgroundColor: '#2c6e9e', borderRadius: 10 }] },
+            options: { indexAxis: 'y', responsive: true }
+        });
+    }
+    function renderProgramRanking() {
+        document.getElementById('programRanking').innerHTML = mockData.topRecommendedPrograms.map((p,i)=>`<div class="program-item" style="display:flex; justify-content:space-between; padding:8px 0;"><span>${i+1}. ${p.name}</span><span class="badge">${p.count} recs</span></div>`).join('');
+    }
+    renderStats(); initGenderChart(); initCategoryChart(); renderProgramRanking();
+    highlightActiveNav();
+</script>
+</body>
+</html>

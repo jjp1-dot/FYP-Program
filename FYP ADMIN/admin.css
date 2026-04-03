@@ -1,0 +1,200 @@
+/* admin.css - Modern UI for all admin pages */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #f0f4f8;
+    color: #1e2a3e;
+}
+
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(145deg, #0f2b3d 0%, #1a3a4f 100%);
+    color: white;
+    position: fixed;
+    height: 100vh;
+    padding: 2rem 1rem;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+}
+
+.logo h2 {
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 0.25rem;
+}
+.logo p {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.nav {
+    margin-top: 3rem;
+}
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 18px;
+    margin: 8px 0;
+    border-radius: 14px;
+    color: #cbd5e6;
+    transition: 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+}
+.nav-item.active, .nav-item:hover {
+    background: rgba(255,255,255,0.12);
+    color: white;
+}
+.nav-item i { width: 24px; }
+
+/* Main content */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 28px 36px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+.page-title h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #0f3b4f, #2c6e9e);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+.admin-profile {
+    background: white;
+    padding: 8px 24px;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.avatar {
+    width: 42px;
+    height: 42px;
+    background: #2c6e9e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+}
+
+/* Cards & forms */
+.card {
+    background: white;
+    border-radius: 28px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    border: 1px solid #e2edf2;
+}
+.card h3 {
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+button, .btn {
+    background: #2c6e9e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 40px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+}
+button:hover {
+    background: #1e5a7e;
+    transform: translateY(-2px);
+}
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 16px;
+    font-family: inherit;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+label {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 6px;
+}
+.question-item, .school-item {
+    background: #f9fbfd;
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #e2edf2;
+}
+.message {
+    padding: 12px;
+    border-radius: 16px;
+    margin-top: 16px;
+}
+.success { background: #d1fae5; color: #065f46; }
+.error { background: #fee2e2; color: #991b1b; }
+
+/* Stats grid for dashboard */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 40px;
+}
+.stat-card {
+    background: white;
+    border-radius: 28px;
+    padding: 22px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+    border: 1px solid #e2edf2;
+}
+.stat-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #5e7e9e;
+}
+.stat-value {
+    font-size: 2.4rem;
+    font-weight: 800;
+    margin-top: 12px;
+    color: #0f3b4f;
+}
+.row {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+canvas { max-height: 260px; width: 100%; }
+
+/* Responsive */
+@media (max-width: 1000px) {
+    .sidebar { width: 80px; }
+    .sidebar .logo p, .sidebar .nav-item span { display: none; }
+    .main-content { margin-left: 80px; }
+    .stats-grid { grid-template-columns: 1fr; }
+}

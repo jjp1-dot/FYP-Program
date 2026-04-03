@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Schools | Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-container">
+    <div class="sidebar"><div class="logo"><h2><i class="fas fa-graduation-cap"></i> FYP : ADMIN</h2><p>College Recommender</p></div>
+        <div class="nav">
+            <a href="admin-dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+            <a href="admin-questions.html" class="nav-item"><i class="fas fa-question-circle"></i><span>Questions</span></a>
+            <a href="admin-schools.html" class="nav-item active"><i class="fas fa-school"></i><span>Schools</span></a>
+            <a href="admin-cms.html" class="nav-item"><i class="fas fa-palette"></i><span>CMS</span></a>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="top-bar"><div class="page-title"><h1>Schools</h1><p>Manage partner institutions</p></div>
+            <div class="admin-profile"><span>Admin</span><div class="avatar">A</div><button onclick="logout()" style="background:#e11d48;">Logout</button></div>
+        </div>
+        <div class="card"><div style="display:flex; justify-content:space-between;"><h3><i class="fas fa-building"></i> All Schools</h3><button onclick="showSchoolForm()">+ Add School</button></div>
+            <div id="schoolsList"></div><div id="message" class="message" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+<script src="admin.js"></script>
+<script>
+    let editingSchoolId = null;
+    function loadSchools() {
+        const container = document.getElementById('schoolsList');
+        container.innerHTML = '';
+        mockSchools.forEach(s => {
+            const div = document.createElement('div'); div.className = 'school-item';
+            div.innerHTML = `<strong>${s.schoolName}</strong> - ${s.location}<br>Programs: ${s.programs.join(', ')}<br>Specialty: ${s.specialtyPrograms.join(', ')}<br>
+                <button onclick="editSchool('${s._id}')">Edit</button> <button onclick="deleteSchool('${s._id}')">Delete</button>`;
+            container.appendChild(div);
+        });
+    }
+    function showSchoolForm(school=null) {
+        editingSchoolId = school?._id || null;
+        const html = `<div id="schoolForm" style="background:#f8fafc; padding:16px; border-radius:20px; margin-bottom:20px;">
+            <h4>${editingSchoolId ? 'Edit' : 'Add'} School</h4>
+            <input type="text" id="schoolName" placeholder="School Name" value="${school?.schoolName || ''}">
+            <input type="text" id="location" placeholder="Location" value="${school?.location || ''}">
+            <label>Programs (comma separated)</label><input type="text" id="programs" value="${school?.programs.join(', ') || ''}">
+            <label>Specialty Programs (comma separated)</label><input type="text" id="specialtyPrograms" value="${school?.specialtyPrograms.join(', ') || ''}">
+            <button onclick="saveSchool()">Save</button> <button onclick="cancelSchoolForm()">Cancel</button>
+        </div>`;
+        document.getElementById('schoolsList').insertAdjacentHTML('beforebegin', html);
+    }
+    function saveSchool() {
+        const payload = {
+            schoolName: document.getElementById('schoolName').value,
+            location: document.getElementById('location').value,
+            programs: document.getElementById('programs').value.split(',').map(s=>s.trim()),
+            specialtyPrograms: document.getElementById('specialtyPrograms').value.split(',').map(s=>s.trim())
+        };
+        if (editingSchoolId) {
+            const idx = mockSchools.findIndex(s=>s._id == editingSchoolId);
+            if (idx!==-1) mockSchools[idx] = {...mockSchools[idx], ...payload, _id: editingSchoolId};
+        } else {
+            payload._id = Date.now().toString();
+            mockSchools.push(payload);
+        }
+        showMessage('Saved!','success'); cancelSchoolForm(); loadSchools();
+    }
+    function editSchool(id) { const s = mockSchools.find(s=>s._id==id); if(s) showSchoolForm(s); }
+    function deleteSchool(id) { if(confirm('Delete?')) { mockSchools = mockSchools.filter(s=>s._id!=id); loadSchools(); showMessage('Deleted','success'); } }
+    function cancelSchoolForm() { document.getElementById('schoolForm')?.remove(); loadSchools(); }
+    function showMessage(msg,type) { const d=document.getElementById('message'); d.textContent=msg; d.className=`message ${type}`; d.style.display='block'; setTimeout(()=>d.style.display='none',2000); }
+    loadSchools(); highlightActiveNav();
+</script>
+</body>
+</html>
