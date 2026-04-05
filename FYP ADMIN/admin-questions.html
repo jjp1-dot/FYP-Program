@@ -2,38 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Questions | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="admin.css">
     <style>
-        .choice-editor {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 20px;
-            margin: 12px 0;
-        }
-        .choice-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-        }
-        .choice-row input {
-            flex: 1;
-            min-width: 120px;
-        }
+        .choice-editor { background: #f8fafc; padding: 12px; border-radius: 20px; margin: 12px 0; }
+        .choice-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+        .choice-row input { flex: 1; min-width: 120px; }
     </style>
 </head>
 <body>
 <div class="admin-container">
     <div class="sidebar">
-        <div class="logo">
-            <h2><i class="fas fa-graduation-cap"></i> FYP : ADMIN</h2>
-            <p>College Recommender</p>
-        </div>
+        <div class="logo"><h2><i class="fas fa-graduation-cap"></i> PathFind</h2><p>College Recommender</p></div>
         <div class="nav">
             <a href="admin-dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
             <a href="admin-questions.html" class="nav-item active"><i class="fas fa-question-circle"></i><span>Questions</span></a>
@@ -43,200 +25,49 @@
     </div>
     <div class="main-content">
         <div class="top-bar">
-            <div class="page-title">
-                <h1>Assessment Questions</h1>
-                <p>Edit the 20 questions students answer</p>
-            </div>
-            <div class="admin-profile">
-                <span>Admin</span>
-                <div class="avatar">A</div>
-                <button onclick="logout()" style="background:#e11d48; padding:6px 14px;">Logout</button>
-            </div>
+            <div class="page-title"><h1>Assessment Questions</h1><p>Manage all questions and choices</p></div>
+            <div class="admin-profile"><span>Admin</span><div class="avatar">A</div><button onclick="logout()" style="background:#e11d48;">Logout</button></div>
         </div>
-
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between;">
                 <h3><i class="fas fa-list"></i> All Questions</h3>
-                <button onclick="showAddForm()"><i class="fas fa-plus"></i> Add New Question</button>
+                <button onclick="showAddForm()">+ Add Question</button>
             </div>
-            <div id="questionsList"></div>
+            <div id="questionsList">Loading...</div>
             <div id="message" class="message" style="display:none;"></div>
         </div>
     </div>
 </div>
-
 <script src="admin.js"></script>
 <script>
-    const DEFAULT_QUESTIONS = [
-        { questionText: "Which subject do you enjoy the most in school?", order: 1, isActive: true, choices: [
-            { text: "Math and problem solving", category: "Technology", weight: 1 },
-            { text: "Science and experiments", category: "Healthcare", weight: 1 },
-            { text: "Writing, literature, or communication", category: "Education", weight: 1 },
-            { text: "Business or entrepreneurship topics", category: "Business", weight: 1 },
-            { text: "Drawing, design, or creative work", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "What type of activity do you enjoy the most?", order: 2, isActive: true, choices: [
-            { text: "Solving puzzles or coding problems", category: "Technology", weight: 1 },
-            { text: "Conducting experiments or studying nature", category: "Healthcare", weight: 1 },
-            { text: "Speaking, writing, or presenting ideas", category: "Education", weight: 1 },
-            { text: "Managing projects or selling products", category: "Business", weight: 1 },
-            { text: "Creating art, designs, or media", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "What kind of career sounds most interesting to you?", order: 3, isActive: true, choices: [
-            { text: "Building software or technology", category: "Technology", weight: 1 },
-            { text: "Working in hospitals or healthcare", category: "Healthcare", weight: 1 },
-            { text: "Teaching or helping students learn", category: "Education", weight: 1 },
-            { text: "Running a company or managing finances", category: "Business", weight: 1 },
-            { text: "Designing graphics, videos, or media", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "Which task would you rather do?", order: 4, isActive: true, choices: [
-            { text: "Fix a computer or create an app", category: "Technology", weight: 1 },
-            { text: "Study human biology or medicine", category: "Healthcare", weight: 1 },
-            { text: "Write an article or story", category: "Education", weight: 1 },
-            { text: "Create a marketing plan", category: "Business", weight: 1 },
-            { text: "Design a logo or artwork", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "What kind of problems do you enjoy solving?", order: 5, isActive: true, choices: [
-            { text: "Technical problems", category: "Technology", weight: 1 },
-            { text: "Scientific or health problems", category: "Healthcare", weight: 1 },
-            { text: "Social or communication problems", category: "Education", weight: 1 },
-            { text: "Business or financial problems", category: "Business", weight: 1 },
-            { text: "Creative challenges", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "Which environment do you prefer working in?", order: 6, isActive: true, choices: [
-            { text: "With computers and technology", category: "Technology", weight: 1 },
-            { text: "Laboratories or medical environments", category: "Healthcare", weight: 1 },
-            { text: "Schools or community organizations", category: "Education", weight: 1 },
-            { text: "Offices or companies", category: "Business", weight: 1 },
-            { text: "Studios or creative spaces", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "How would your friends describe you?", order: 7, isActive: true, choices: [
-            { text: "Analytical and logical", category: "Technology", weight: 1 },
-            { text: "Curious and observant", category: "Healthcare", weight: 1 },
-            { text: "Communicative and expressive", category: "Education", weight: 1 },
-            { text: "Leader and organizer", category: "Business", weight: 1 },
-            { text: "Creative and imaginative", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "What type of project would you enjoy the most?", order: 8, isActive: true, choices: [
-            { text: "Building a website or app", category: "Technology", weight: 1 },
-            { text: "Conducting a scientific experiment", category: "Healthcare", weight: 1 },
-            { text: "Writing a blog or article", category: "Education", weight: 1 },
-            { text: "Creating a business plan", category: "Business", weight: 1 },
-            { text: "Producing a video or artwork", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "What motivates you the most in a future career?", order: 9, isActive: true, choices: [
-            { text: "Creating innovative technology", category: "Technology", weight: 1 },
-            { text: "Helping people with health or science", category: "Healthcare", weight: 1 },
-            { text: "Educating or inspiring others", category: "Education", weight: 1 },
-            { text: "Achieving financial or business success", category: "Business", weight: 1 },
-            { text: "Expressing creativity", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "Which skill do you think is your strongest?", order: 10, isActive: true, choices: [
-            { text: "Logical thinking and programming", category: "Technology", weight: 1 },
-            { text: "Scientific observation and research", category: "Healthcare", weight: 1 },
-            { text: "Communication and writing", category: "Education", weight: 1 },
-            { text: "Leadership and decision-making", category: "Business", weight: 1 },
-            { text: "Creativity and design", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "Which type of school project do you enjoy the most?", order: 11, isActive: true, choices: [
-            { text: "Building a website, app, or technical project", category: "Technology", weight: 1 },
-            { text: "Researching scientific topics or conducting experiments", category: "Healthcare", weight: 1 },
-            { text: "Writing essays or giving presentations", category: "Education", weight: 1 },
-            { text: "Creating business plans or marketing ideas", category: "Business", weight: 1 },
-            { text: "Designing posters, videos, or digital art", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "What kind of problems do you enjoy solving in your free time?", order: 12, isActive: true, choices: [
-            { text: "Computer or technology-related issues", category: "Technology", weight: 1 },
-            { text: "Scientific or health-related questions", category: "Healthcare", weight: 1 },
-            { text: "Social or community issues", category: "Education", weight: 1 },
-            { text: "Financial or business challenges", category: "Business", weight: 1 },
-            { text: "Creative design challenges", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "What would you most likely do during your free time?", order: 13, isActive: true, choices: [
-            { text: "Explore new technology or learn coding", category: "Technology", weight: 1 },
-            { text: "Watch science documentaries or read about health", category: "Healthcare", weight: 1 },
-            { text: "Read books, write stories, or debate ideas", category: "Education", weight: 1 },
-            { text: "Learn about business trends or investments", category: "Business", weight: 1 },
-            { text: "Draw, edit videos, or create digital content", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "Which tool would you most enjoy using?", order: 14, isActive: true, choices: [
-            { text: "Programming software or computer tools", category: "Technology", weight: 1 },
-            { text: "Laboratory equipment", category: "Healthcare", weight: 1 },
-            { text: "Books, journals, or communication tools", category: "Education", weight: 1 },
-            { text: "Financial tools or management software", category: "Business", weight: 1 },
-            { text: "Design software or creative tools", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "What type of achievement would make you the proudest?", order: 15, isActive: true, choices: [
-            { text: "Creating a useful application or software", category: "Technology", weight: 1 },
-            { text: "Discovering something new in science or medicine", category: "Healthcare", weight: 1 },
-            { text: "Helping people learn or understand ideas", category: "Education", weight: 1 },
-            { text: "Building a successful business", category: "Business", weight: 1 },
-            { text: "Producing creative work people admire", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "Which task sounds the most interesting to you?", order: 16, isActive: true, choices: [
-            { text: "Developing a computer system", category: "Technology", weight: 1 },
-            { text: "Studying diseases and health conditions", category: "Healthcare", weight: 1 },
-            { text: "Teaching or mentoring others", category: "Education", weight: 1 },
-            { text: "Managing a company or team", category: "Business", weight: 1 },
-            { text: "Producing films, music, or digital media", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "What kind of class activity excites you the most?", order: 17, isActive: true, choices: [
-            { text: "Coding or technology-based activities", category: "Technology", weight: 1 },
-            { text: "Laboratory experiments", category: "Healthcare", weight: 1 },
-            { text: "Group discussions and presentations", category: "Education", weight: 1 },
-            { text: "Business simulations or case studies", category: "Business", weight: 1 },
-            { text: "Art or design projects", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "If you were to join a club, which would you pick?", order: 18, isActive: true, choices: [
-            { text: "Programming or robotics club", category: "Technology", weight: 1 },
-            { text: "Science or medical club", category: "Healthcare", weight: 1 },
-            { text: "Debate or writing club", category: "Education", weight: 1 },
-            { text: "Entrepreneurship club", category: "Business", weight: 1 },
-            { text: "Arts or multimedia club", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "What type of career impact do you want to make?", order: 19, isActive: true, choices: [
-            { text: "Innovate technology that improves everyday life", category: "Technology", weight: 1 },
-            { text: "Improve health and scientific knowledge", category: "Healthcare", weight: 1 },
-            { text: "Educate and inspire people", category: "Education", weight: 1 },
-            { text: "Grow businesses and create jobs", category: "Business", weight: 1 },
-            { text: "Inspire people through creative works", category: "Creative Arts", weight: 1 }
-        ]},
-        { questionText: "Which activity sounds the most enjoyable for you?", order: 20, isActive: true, choices: [
-            { text: "Building computers or apps", category: "Technology", weight: 1 },
-            { text: "Studying the human body or nature", category: "Healthcare", weight: 1 },
-            { text: "Writing, speaking, or teaching", category: "Education", weight: 1 },
-            { text: "Planning business strategies", category: "Business", weight: 1 },
-            { text: "Creating designs, videos, or artworks", category: "Creative Arts", weight: 1 }
-        ]}
-    ];
-
-    if (typeof mockQuestions === 'undefined' || !mockQuestions.length) {
-        mockQuestions = DEFAULT_QUESTIONS.map((q, idx) => ({ ...q, _id: (idx+1).toString() }));
-    }
-
     let editingId = null;
     let choiceFields = [];
 
     async function loadQuestions() {
-        let questions = mockQuestions;
-        const container = document.getElementById('questionsList');
-        container.innerHTML = '';
-        questions.forEach(q => {
-            const div = document.createElement('div');
-            div.className = 'question-item';
-            div.innerHTML = `
-                <strong>Q${q.order}: ${q.questionText}</strong> 
-                <span style="float:right">
-                    <button onclick="editQuestion('${q._id}')">✏️ Edit</button>
-                    <button onclick="deleteQuestion('${q._id}')">🗑️ Delete</button>
-                </span>
-                <div style="font-size:0.8rem; margin-top:8px; color:#2c6e9e;">
-                    ${q.choices.map(c => `<span class="badge" style="background:#e6f0fa; padding:2px 8px; margin:2px;">${c.text} (${c.category})</span>`).join(' ')}
-                </div>
-                <div style="font-size:0.7rem; margin-top:4px;">Active: ${q.isActive ? '✅' : '❌'} | Order: ${q.order}</div>
-            `;
-            container.appendChild(div);
-        });
+        try {
+            const res = await fetchWithAuth('/questions/all');
+            const questions = await res.json();
+            const container = document.getElementById('questionsList');
+            container.innerHTML = '';
+            questions.forEach(q => {
+                const div = document.createElement('div');
+                div.className = 'question-item';
+                div.innerHTML = `
+                    <strong>Q${q.order}: ${q.questionText}</strong>
+                    <span style="float:right">
+                        <button onclick="editQuestion('${q._id}')">✏️ Edit</button>
+                        <button onclick="deleteQuestion('${q._id}')">🗑️ Delete</button>
+                    </span>
+                    <div style="font-size:0.8rem; margin-top:8px;">
+                        ${q.choices.map(c => `<span class="badge">${c.text} (${c.category})</span>`).join(' ')}
+                    </div>
+                    <div style="font-size:0.7rem;">Active: ${q.isActive ? '✅' : '❌'} | Order: ${q.order}</div>
+                `;
+                container.appendChild(div);
+            });
+        } catch (err) {
+            document.getElementById('questionsList').innerHTML = '<p class="error">Failed to load questions</p>';
+        }
     }
 
     function showAddForm() {
@@ -246,14 +77,16 @@
     }
 
     function editQuestion(id) {
-        const q = mockQuestions.find(x => x._id == id);
-        if (!q) return;
-        editingId = id;
-        document.getElementById('qText').value = q.questionText;
-        document.getElementById('qOrder').value = q.order;
-        document.getElementById('qActive').checked = q.isActive;
-        choiceFields = q.choices.map(c => ({ text: c.text, category: c.category, weight: c.weight }));
-        renderForm();
+        fetchWithAuth('/questions/all').then(res => res.json()).then(questions => {
+            const q = questions.find(x => x._id == id);
+            if (!q) return;
+            editingId = id;
+            document.getElementById('qText').value = q.questionText;
+            document.getElementById('qOrder').value = q.order;
+            document.getElementById('qActive').checked = q.isActive;
+            choiceFields = q.choices.map(c => ({ text: c.text, category: c.category, weight: c.weight }));
+            renderForm();
+        });
     }
 
     function renderForm() {
@@ -263,7 +96,7 @@
                 <input type="text" id="qText" placeholder="Question text" style="width:100%;">
                 <div style="display:flex; gap:10px;">
                     <input type="number" id="qOrder" placeholder="Order">
-                    <label style="display:flex; align-items:center;"><input type="checkbox" id="qActive" checked> Active</label>
+                    <label><input type="checkbox" id="qActive" checked> Active</label>
                 </div>
                 <div id="choicesContainer"></div>
                 <button onclick="addChoice()">+ Add Choice</button>
@@ -286,11 +119,11 @@
             div.innerHTML = `
                 <input type="text" placeholder="Choice text" value="${ch.text.replace(/"/g, '&quot;')}" data-idx="${idx}" data-field="text" style="flex:2;">
                 <select data-idx="${idx}" data-field="category" style="flex:1;">
-                    <option value="Technology" ${ch.category === 'Technology' ? 'selected' : ''}>Technology</option>
-                    <option value="Healthcare" ${ch.category === 'Healthcare' ? 'selected' : ''}>Healthcare</option>
-                    <option value="Education" ${ch.category === 'Education' ? 'selected' : ''}>Education</option>
-                    <option value="Business" ${ch.category === 'Business' ? 'selected' : ''}>Business</option>
-                    <option value="Creative Arts" ${ch.category === 'Creative Arts' ? 'selected' : ''}>Creative Arts</option>
+                    <option ${ch.category === 'Technology' ? 'selected' : ''}>Technology</option>
+                    <option ${ch.category === 'Healthcare' ? 'selected' : ''}>Healthcare</option>
+                    <option ${ch.category === 'Education' ? 'selected' : ''}>Education</option>
+                    <option ${ch.category === 'Business' ? 'selected' : ''}>Business</option>
+                    <option ${ch.category === 'Creative Arts' ? 'selected' : ''}>Creative Arts</option>
                 </select>
                 <input type="number" placeholder="Weight" value="${ch.weight}" data-idx="${idx}" data-field="weight" style="width:80px;">
                 <button onclick="removeChoice(${idx})">🗑️</button>
@@ -314,43 +147,45 @@
     function addChoice() { choiceFields.push({ text: '', category: 'Technology', weight: 1 }); refreshChoicesUI(); }
     function removeChoice(idx) { choiceFields.splice(idx, 1); refreshChoicesUI(); }
 
-    function saveQuestion() {
+    async function saveQuestion() {
         const payload = {
             questionText: document.getElementById('qText').value,
-            order: parseInt(document.getElementById('qOrder').value) || mockQuestions.length + 1,
+            order: parseInt(document.getElementById('qOrder').value),
             isActive: document.getElementById('qActive').checked,
             choices: choiceFields
         };
-        if (editingId) {
-            const idx = mockQuestions.findIndex(q => q._id == editingId);
-            if (idx !== -1) mockQuestions[idx] = { ...mockQuestions[idx], ...payload, _id: editingId };
-        } else {
-            payload._id = Date.now().toString();
-            mockQuestions.push(payload);
+        try {
+            if (editingId) {
+                await fetchWithAuth(`/questions/${editingId}`, { method: 'PUT', body: JSON.stringify(payload) });
+            } else {
+                await fetchWithAuth('/questions', { method: 'POST', body: JSON.stringify(payload) });
+            }
+            showMessage('message', 'Saved successfully!', 'success');
+            cancelEdit();
+            loadQuestions();
+        } catch (err) {
+            showMessage('message', 'Error saving question', 'error');
         }
-        showMessage('Saved successfully!', 'success');
-        cancelEdit();
-        loadQuestions();
     }
 
-    function deleteQuestion(id) {
+    async function deleteQuestion(id) {
         if (confirm('Delete this question permanently?')) {
-            mockQuestions = mockQuestions.filter(q => q._id != id);
-            loadQuestions();
-            showMessage('Deleted', 'success');
+            try {
+                await fetchWithAuth(`/questions/${id}`, { method: 'DELETE' });
+                loadQuestions();
+                showMessage('message', 'Deleted', 'success');
+            } catch (err) {
+                showMessage('message', 'Delete failed', 'error');
+            }
         }
     }
 
     function cancelEdit() { document.getElementById('editForm')?.remove(); loadQuestions(); }
-    function showMessage(msg, type) { 
-        const msgDiv = document.getElementById('message');
-        msgDiv.textContent = msg;
-        msgDiv.className = `message ${type}`;
-        msgDiv.style.display = 'block';
-        setTimeout(() => msgDiv.style.display = 'none', 2000);
-    }
 
-    loadQuestions();
+    if (checkAuth()) {
+        loadQuestions();
+        highlightActiveNav();
+    }
 </script>
 </body>
 </html>

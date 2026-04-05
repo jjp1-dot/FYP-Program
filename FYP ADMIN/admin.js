@@ -1,5 +1,5 @@
-// admin.js - backend integration
-const API_BASE = 'http://localhost:5000/api'; // pabago na lang po ng backend URL
+// admin.js - Real backend integration
+const API_BASE = 'http://localhost:5000/api'; // pabago ng backend url dito
 
 function getToken() {
     return localStorage.getItem('adminToken');
@@ -39,7 +39,6 @@ function logout() {
     window.location.href = 'admin-login.html';
 }
 
-// active nav
 function highlightActiveNav() {
     const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
     document.querySelectorAll('.nav-item').forEach(link => {
@@ -50,4 +49,14 @@ function highlightActiveNav() {
             link.classList.remove('active');
         }
     });
+}
+
+function showMessage(elementId, msg, type) {
+    const el = document.getElementById(elementId);
+    if (el) {
+        el.textContent = msg;
+        el.className = `message ${type}`;
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 3000);
+    }
 }

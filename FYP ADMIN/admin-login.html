@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Login | PathFind</title>
+    <title>Admin Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -19,21 +19,33 @@
 <div class="login-card">
     <i class="fas fa-graduation-cap" style="font-size:48px; color:#2c6e9e;"></i>
     <h2>Admin Login</h2>
-    <p style="margin-bottom:20px;">Program Recommendation System</p>
+    <p style="margin-bottom:20px;">FindYourProgram</p>
     <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password">
     <button onclick="login()">Sign In</button>
     <div id="errorMsg" class="error"></div>
 </div>
 <script>
-    function login() {
+    const API_BASE = 'http://localhost:5000/api';
+    async function login() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-        if (username === 'admin' && password === 'admin123') {
-            localStorage.setItem('adminToken', 'mock-token');
-            window.location.href = 'admin-dashboard.html';
-        } else {
-            document.getElementById('errorMsg').innerText = 'Invalid credentials (demo: admin/admin123)';
+        const errorDiv = document.getElementById('errorMsg');
+        try {
+            const res = await fetch(`${API_BASE}/admin/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                localStorage.setItem('adminToken', data.token);
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                errorDiv.innerText = data.message || 'Invalid credentials';
+            }
+        } catch (err) {
+            errorDiv.innerText = 'Server error. Is backend running?';
         }
     }
 </script>

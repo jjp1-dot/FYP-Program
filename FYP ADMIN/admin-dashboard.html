@@ -11,7 +11,7 @@
 <body>
 <div class="admin-container">
     <div class="sidebar">
-        <div class="logo"><h2><i class="fas fa-graduation-cap"></i> FYP : ADMIN</h2><p>College Recommender</p></div>
+        <div class="logo"><h2><i class="fas fa-graduation-cap"></i> PathFind</h2><p>College Recommender</p></div>
         <div class="nav">
             <a href="admin-dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
             <a href="admin-questions.html" class="nav-item"><i class="fas fa-question-circle"></i><span>Questions</span></a>
@@ -21,69 +21,89 @@
     </div>
     <div class="main-content">
         <div class="top-bar">
-            <div class="page-title"><h1>Dashboard</h1><p>Program recommendation analytics</p></div>
+            <div class="page-title"><h1>Dashboard</h1><p>Live analytics from student responses</p></div>
             <div class="admin-profile"><span>Admin</span><div class="avatar">A</div><button onclick="logout()" style="background:#e11d48;">Logout</button></div>
         </div>
-        <div class="stats-grid" id="statsGrid"></div>
+        <div id="statsGrid" class="stats-grid">Loading...</div>
         <div class="row">
             <div class="card"><h3><i class="fas fa-venus-mars"></i> Gender Distribution</h3><canvas id="genderChart"></canvas></div>
-            <div class="card"><h3><i class="fas fa-trophy"></i> Top Recommended Programs</h3><div id="programRanking"></div></div>
+            <div class="card"><h3><i class="fas fa-trophy"></i> Top Recommended Programs</h3><div id="programRanking">Loading...</div></div>
         </div>
         <div class="row">
             <div class="card"><h3><i class="fas fa-chart-line"></i> Category Interest</h3><canvas id="categoryChart"></canvas></div>
-            <div class="card"><h3><i class="fas fa-user-check"></i> Total Students Guided</h3><div id="totalAssessments" style="font-size:3rem; font-weight:800;">0</div><p>Average age: <span id="avgAge">—</span></p></div>
+            <div class="card"><h3><i class="fas fa-user-check"></i> Total Students Guided</h3><div id="totalAssessments" style="font-size:3rem; font-weight:800;">-</div><p>Average age: <span id="avgAge">—</span></p></div>
         </div>
     </div>
 </div>
 <script src="admin.js"></script>
 <script>
-    const mockData = {
-        totalAssessments: 847, averageAge: 20.4,
-        genderDistribution: { male: 412, female: 398, other: 37 },
-        topRecommendedPrograms: [
-            { name: "BS Information Technology", count: 267, category: "Technology" },
-            { name: "BS Nursing", count: 198, category: "Healthcare" },
-            { name: "BS Education", count: 144, category: "Education" },
-            { name: "BS Business Administration", count: 112, category: "Business" },
-            { name: "BS Multimedia Arts", count: 86, category: "Creative Arts" }
-        ],
-        categoryInterest: [
-            { category: "Technology", percentage: 32 },
-            { category: "Healthcare", percentage: 28 },
-            { category: "Education", percentage: 18 },
-            { category: "Business", percentage: 14 },
-            { category: "Creative Arts", percentage: 8 }
-        ],
-        mostRecommendedCategory: "Technology"
-    };
-    function renderStats() {
-        document.getElementById('statsGrid').innerHTML = `
-            <div class="stat-card"><div class="stat-title">Total Assessments</div><div class="stat-value">${mockData.totalAssessments}</div></div>
-            <div class="stat-card"><div class="stat-title">Average Age</div><div class="stat-value">${mockData.averageAge} yrs</div></div>
-            <div class="stat-card"><div class="stat-title">Top Category</div><div class="stat-value">${mockData.mostRecommendedCategory}</div></div>
-        `;
-        document.getElementById('totalAssessments').innerText = mockData.totalAssessments;
-        document.getElementById('avgAge').innerText = mockData.averageAge;
+    let genderChart, categoryChart;
+
+    async function loadDashboard() {
+        try {
+            const res = await fetchWithAuth('/analytics/summary');
+            const data = await res.json();
+            renderStats(data);
+            renderGenderChart(data.genderDistribution);
+            renderProgramRanking(data.topPrograms || []);
+            renderCategoryChart(data.categoryInterest || []);
+            document.getElementById('totalAssessments').innerText = data.totalAssessments || 0;
+            document.getElementById('avgAge').innerText = data.averageAge || '—';
+        } catch (err) {
+            document.getElementById('statsGrid').innerHTML = '<p class="error">Failed to load analytics. Make sure backend is running.</p>';
+        }
     }
-    function initGenderChart() {
-        new Chart(document.getElementById('genderChart'), {
+
+    function renderStats(data) {
+        const grid = document.getElementById('statsGrid');
+        grid.innerHTML = `
+            <div class="stat-card"><div class="stat-title">Total Assessments</div><div class="stat-value">${data.totalAssessments || 0}</div></div>
+            <div class="stat-card"><div class="stat-title">Average Age</div><div class="stat-value">${data.averageAge || 0} yrs</div></div>
+            <div class="stat-card"><div class="stat-title">Most Recommended Category</div><div class="stat-value">${data.mostRecommendedCategory || 'N/A'}</div></div>
+        `;
+    }
+
+    function renderGenderChart(genderDist) {
+        const ctx = document.getElementById('genderChart').getContext('2d');
+        if (genderChart) genderChart.destroy();
+        genderChart = new Chart(ctx, {
             type: 'doughnut',
-            data: { labels: ['Male','Female','Other'], datasets: [{ data: [412,398,37], backgroundColor: ['#3b82f6','#f472b6','#94a3b8'] }] },
+            data: {
+                labels: ['Male', 'Female', 'Other'],
+                datasets: [{ data: [genderDist.male || 0, genderDist.female || 0, genderDist.other || 0], backgroundColor: ['#3b82f6', '#f472b6', '#94a3b8'] }]
+            },
             options: { responsive: true }
         });
     }
-    function initCategoryChart() {
-        new Chart(document.getElementById('categoryChart'), {
+
+    function renderProgramRanking(programs) {
+        const container = document.getElementById('programRanking');
+        if (!programs.length) { container.innerHTML = '<p>No data yet</p>'; return; }
+        container.innerHTML = programs.map((p, i) => `
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #e2edf2;">
+                <span>${i+1}. ${p.name}</span>
+                <span class="badge">${p.count} recs</span>
+            </div>
+        `).join('');
+    }
+
+    function renderCategoryChart(categories) {
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        if (categoryChart) categoryChart.destroy();
+        categoryChart = new Chart(ctx, {
             type: 'bar',
-            data: { labels: mockData.categoryInterest.map(c=>c.category), datasets: [{ label: 'Interest (%)', data: mockData.categoryInterest.map(c=>c.percentage), backgroundColor: '#2c6e9e', borderRadius: 10 }] },
-            options: { indexAxis: 'y', responsive: true }
+            data: {
+                labels: categories.map(c => c.category),
+                datasets: [{ label: 'Interest (%)', data: categories.map(c => c.percentage), backgroundColor: '#2c6e9e', borderRadius: 10 }]
+            },
+            options: { indexAxis: 'y', responsive: true, scales: { x: { max: 100 } } }
         });
     }
-    function renderProgramRanking() {
-        document.getElementById('programRanking').innerHTML = mockData.topRecommendedPrograms.map((p,i)=>`<div class="program-item" style="display:flex; justify-content:space-between; padding:8px 0;"><span>${i+1}. ${p.name}</span><span class="badge">${p.count} recs</span></div>`).join('');
+
+    if (checkAuth()) {
+        loadDashboard();
+        highlightActiveNav();
     }
-    renderStats(); initGenderChart(); initCategoryChart(); renderProgramRanking();
-    highlightActiveNav();
 </script>
 </body>
 </html>
