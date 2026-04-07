@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Schools | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -10,7 +11,7 @@
 <body>
 <div class="admin-container">
     <div class="sidebar">
-        <div class="logo"><h2><i class="fas fa-graduation-cap"></i> PathFind</h2><p>College Recommender</p></div>
+        <div class="logo"><h2><i class="fas fa-graduation-cap"></i> FYP: ADMIN</h2></div>
         <div class="nav">
             <a href="admin-dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
             <a href="admin-questions.html" class="nav-item"><i class="fas fa-question-circle"></i><span>Questions</span></a>
@@ -38,41 +39,64 @@
     let editingSchoolId = null;
 
     async function loadSchools() {
+        const container = document.getElementById('schoolsList');
         try {
-            const res = await fetchWithAuth('/schools');
+            const res = await fetch(`${API_BASE}/schools`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const schools = await res.json();
-            const container = document.getElementById('schoolsList');
             container.innerHTML = '';
+            if (schools.length === 0) {
+                container.innerHTML = '<p>No schools found. Add your first school.</p>';
+                return;
+            }
             schools.forEach(s => {
+                const rankings = s.rankings || {};
                 const div = document.createElement('div');
                 div.className = 'school-item';
                 div.innerHTML = `
-                    <strong>${s.schoolName}</strong> - ${s.location}<br>
-                    Programs: ${s.programs.join(', ')}<br>
-                    Specialty: ${s.specialtyPrograms.join(', ')}<br>
-                    <button onclick="editSchool('${s._id}')">Edit</button>
-                    <button onclick="deleteSchool('${s._id}')">Delete</button>
+                    <div class="school-header"><strong>${escapeHtml(s.schoolName)}</strong> - ${escapeHtml(s.location)}</div>
+                    <div class="detail">Rankings:</div>
+                    <div class="detail">Technology & Computing: ${rankings['Technology & Computing'] || '-'}</div>
+                    <div class="detail">Health & Life Sciences: ${rankings['Health & Life Sciences'] || '-'}</div>
+                    <div class="detail">Education & Social Sciences: ${rankings['Education & Social Sciences'] || '-'}</div>
+                    <div class="detail">Business & Management: ${rankings['Business & Management'] || '-'}</div>
+                    <div class="detail">Creative Arts & Media: ${rankings['Creative Arts & Media'] || '-'}</div>
+                    <div class="detail">Website: <a href="${escapeHtml(s.website)}" target="_blank">${escapeHtml(s.website)}</a></div>
+                    <div class="actions">
+                        <button onclick="editSchool('${s._id}')">✏️ Edit</button>
+                        <button onclick="deleteSchool('${s._id}')">🗑️ Delete</button>
+                    </div>
                 `;
                 container.appendChild(div);
             });
         } catch (err) {
-            document.getElementById('schoolsList').innerHTML = '<p class="error">Failed to load schools</p>';
+            console.error('Load schools error:', err);
+            container.innerHTML = '<p class="error">Failed to load schools. Make sure backend is running.</p>';
         }
     }
 
     function showSchoolForm(school = null) {
         editingSchoolId = school?._id || null;
+        const rankings = school?.rankings || {};
         const html = `
-            <div id="schoolForm" style="background:#f8fafc; padding:16px; border-radius:20px; margin-bottom:20px;">
+            <div id="schoolForm" style="background:#f8fafc; padding:20px; border-radius:20px; margin-bottom:20px;">
                 <h4>${editingSchoolId ? 'Edit' : 'Add'} School</h4>
-                <input type="text" id="schoolName" placeholder="School Name" value="${school?.schoolName || ''}">
-                <input type="text" id="location" placeholder="Location" value="${school?.location || ''}">
-                <label>Programs (comma separated)</label>
-                <input type="text" id="programs" value="${school?.programs.join(', ') || ''}">
-                <label>Specialty Programs (comma separated)</label>
-                <input type="text" id="specialtyPrograms" value="${school?.specialtyPrograms.join(', ') || ''}">
-                <button onclick="saveSchool()">Save</button>
-                <button onclick="cancelSchoolForm()">Cancel</button>
+                <input type="text" id="schoolName" placeholder="School Name" value="${escapeHtml(school?.schoolName || '')}">
+                <input type="text" id="location" placeholder="Location" value="${escapeHtml(school?.location || '')}">
+                <label>Rankings (lower number = better)</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>Technology & Computing: <input type="number" id="rankTech" value="${rankings['Technology & Computing'] || ''}" placeholder="1-100"></div>
+                    <div>Health & Life Sciences: <input type="number" id="rankHealth" value="${rankings['Health & Life Sciences'] || ''}" placeholder="1-100"></div>
+                    <div>Education & Social Sciences: <input type="number" id="rankEdu" value="${rankings['Education & Social Sciences'] || ''}" placeholder="1-100"></div>
+                    <div>Business & Management: <input type="number" id="rankBiz" value="${rankings['Business & Management'] || ''}" placeholder="1-100"></div>
+                    <div>Creative Arts & Media: <input type="number" id="rankCreative" value="${rankings['Creative Arts & Media'] || ''}" placeholder="1-100"></div>
+                </div>
+                <label>Website URL</label>
+                <input type="text" id="website" placeholder="https://..." value="${escapeHtml(school?.website || '')}">
+                <div style="margin-top: 15px;">
+                    <button onclick="saveSchool()">Save</button>
+                    <button onclick="cancelSchoolForm()">Cancel</button>
+                </div>
             </div>
         `;
         const existing = document.getElementById('schoolForm');
@@ -81,46 +105,105 @@
     }
 
     async function saveSchool() {
+        const schoolName = document.getElementById('schoolName').value.trim();
+        const location = document.getElementById('location').value.trim();
+        if (!schoolName) {
+            showMessage('School name is required', 'error');
+            return;
+        }
+
+        const rankings = {};
+        const tech = document.getElementById('rankTech').value;
+        const health = document.getElementById('rankHealth').value;
+        const edu = document.getElementById('rankEdu').value;
+        const biz = document.getElementById('rankBiz').value;
+        const creative = document.getElementById('rankCreative').value;
+        if (tech) rankings['Technology & Computing'] = parseInt(tech);
+        if (health) rankings['Health & Life Sciences'] = parseInt(health);
+        if (edu) rankings['Education & Social Sciences'] = parseInt(edu);
+        if (biz) rankings['Business & Management'] = parseInt(biz);
+        if (creative) rankings['Creative Arts & Media'] = parseInt(creative);
+
         const payload = {
-            schoolName: document.getElementById('schoolName').value,
-            location: document.getElementById('location').value,
-            programs: document.getElementById('programs').value.split(',').map(s => s.trim()),
-            specialtyPrograms: document.getElementById('specialtyPrograms').value.split(',').map(s => s.trim())
+            schoolName: schoolName,
+            location: location,
+            rankings: rankings,
+            website: document.getElementById('website').value.trim()
         };
+
         try {
+            let response;
             if (editingSchoolId) {
-                await fetchWithAuth(`/schools/${editingSchoolId}`, { method: 'PUT', body: JSON.stringify(payload) });
+                response = await fetchWithAuth(`/schools/${editingSchoolId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(payload)
+                });
             } else {
-                await fetchWithAuth('/schools', { method: 'POST', body: JSON.stringify(payload) });
+                response = await fetchWithAuth('/schools', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
             }
-            showMessage('message', 'Saved!', 'success');
+            if (!response.ok) throw new Error('Save failed');
+            showMessage(editingSchoolId ? 'School updated successfully!' : 'School added successfully!', 'success');
             cancelSchoolForm();
-            loadSchools();
+            loadSchools(); // reload from database
         } catch (err) {
-            showMessage('message', 'Error saving school', 'error');
+            console.error(err);
+            showMessage('Error saving school. Make sure you are logged in.', 'error');
         }
     }
 
     async function editSchool(id) {
-        const res = await fetchWithAuth('/schools');
-        const schools = await res.json();
-        const school = schools.find(s => s._id == id);
-        if (school) showSchoolForm(school);
-    }
-
-    async function deleteSchool(id) {
-        if (confirm('Delete this school?')) {
-            try {
-                await fetchWithAuth(`/schools/${id}`, { method: 'DELETE' });
-                loadSchools();
-                showMessage('message', 'Deleted', 'success');
-            } catch (err) {
-                showMessage('message', 'Delete failed', 'error');
+        try {
+            const res = await fetch(`${API_BASE}/schools`);
+            const schools = await res.json();
+            const school = schools.find(s => s._id === id);
+            if (school) {
+                showSchoolForm(school);
+            } else {
+                showMessage('School not found', 'error');
             }
+        } catch (err) {
+            showMessage('Error loading school details', 'error');
         }
     }
 
-    function cancelSchoolForm() { document.getElementById('schoolForm')?.remove(); loadSchools(); }
+    async function deleteSchool(id) {
+        if (!confirm('Delete this school permanently? This action cannot be undone.')) return;
+        try {
+            const response = await fetchWithAuth(`/schools/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Delete failed');
+            showMessage('School deleted successfully', 'success');
+            loadSchools(); // refresh list
+        } catch (err) {
+            showMessage('Error deleting school', 'error');
+        }
+    }
+
+    function cancelSchoolForm() {
+        const form = document.getElementById('schoolForm');
+        if (form) form.remove();
+        loadSchools();
+    }
+
+    function showMessage(msg, type) {
+        const msgDiv = document.getElementById('message');
+        msgDiv.textContent = msg;
+        msgDiv.className = `message ${type}`;
+        msgDiv.style.display = 'block';
+        setTimeout(() => msgDiv.style.display = 'none', 3000);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
 
     if (checkAuth()) {
         loadSchools();

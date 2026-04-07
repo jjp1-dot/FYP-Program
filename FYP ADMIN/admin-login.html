@@ -2,17 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | FYP</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #e0f0ff, #b8d9f5); height:100vh; display:flex; align-items:center; justify-content:center; }
-        .login-card { background: white; padding: 40px; border-radius: 48px; width: 380px; box-shadow: 0 25px 45px rgba(0,0,0,0.1); text-align: center; }
-        .login-card h2 { margin-bottom: 8px; color: #0f3b4f; }
-        .login-card input { width:100%; padding:14px; margin:12px 0; border-radius: 32px; border:1px solid #cbd5e1; }
-        .login-card button { width:100%; padding:14px; background:#2c6e9e; color:white; border:none; border-radius:32px; font-weight:bold; cursor:pointer; }
-        .error { color:#e11d48; margin-top:12px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f0ff, #b8d9f5);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 48px;
+            width: 380px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .login-card h2 {
+            margin-bottom: 8px;
+            color: #0f3b4f;
+        }
+        .login-card input {
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 32px;
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+        }
+        .login-card button {
+            width: 100%;
+            padding: 14px;
+            background: #2c6e9e;
+            color: white;
+            border: none;
+            border-radius: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-card button:hover {
+            background: #1e5a7e;
+        }
+        .error {
+            color: #e11d48;
+            margin-top: 12px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -20,34 +66,51 @@
     <i class="fas fa-graduation-cap" style="font-size:48px; color:#2c6e9e;"></i>
     <h2>Admin Login</h2>
     <p style="margin-bottom:20px;">FindYourProgram</p>
-    <input type="text" id="username" placeholder="Username">
+    <input type="text" id="username" placeholder="Username" autocomplete="off">
     <input type="password" id="password" placeholder="Password">
     <button onclick="login()">Sign In</button>
     <div id="errorMsg" class="error"></div>
 </div>
+
 <script>
-    const API_BASE = 'http://localhost:5000/api';
+    const API_BASE = 'http://localhost:5000/api'; // Change if your backend runs on a different port
+
     async function login() {
-        const username = document.getElementById('username').value;
+        const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
         const errorDiv = document.getElementById('errorMsg');
+
+        if (!username || !password) {
+            errorDiv.innerText = 'Please enter username and password';
+            return;
+        }
+
         try {
-            const res = await fetch(`${API_BASE}/admin/login`, {
+            const response = await fetch(`${API_BASE}/admin/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
             });
-            const data = await res.json();
-            if (res.ok) {
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Store token and redirect to dashboard
                 localStorage.setItem('adminToken', data.token);
                 window.location.href = 'admin-dashboard.html';
             } else {
                 errorDiv.innerText = data.message || 'Invalid credentials';
             }
         } catch (err) {
-            errorDiv.innerText = 'Server error. Is backend running?';
+            console.error(err);
+            errorDiv.innerText = 'Server error. Is the backend running on port 5000?';
         }
     }
+
+    // Optional: allow pressing Enter to submit
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') login();
+    });
 </script>
 </body>
 </html>

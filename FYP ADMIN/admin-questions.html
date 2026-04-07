@@ -10,12 +10,13 @@
         .choice-editor { background: #f8fafc; padding: 12px; border-radius: 20px; margin: 12px 0; }
         .choice-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
         .choice-row input { flex: 1; min-width: 120px; }
+        .badge { background: #e2e8f0; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; display: inline-block; margin: 2px; }
     </style>
 </head>
 <body>
 <div class="admin-container">
     <div class="sidebar">
-        <div class="logo"><h2><i class="fas fa-graduation-cap"></i> PathFind</h2><p>College Recommender</p></div>
+        <div class="logo"><h2><i class="fas fa-graduation-cap"></i> FYP: ADMIN </h2></div>
         <div class="nav">
             <a href="admin-dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
             <a href="admin-questions.html" class="nav-item active"><i class="fas fa-question-circle"></i><span>Questions</span></a>
@@ -49,24 +50,31 @@
             const questions = await res.json();
             const container = document.getElementById('questionsList');
             container.innerHTML = '';
+            if (questions.length === 0) {
+                container.innerHTML = '<p>No questions found. Add your first question.</p>';
+                return;
+            }
             questions.forEach(q => {
                 const div = document.createElement('div');
                 div.className = 'question-item';
                 div.innerHTML = `
-                    <strong>Q${q.order}: ${q.questionText}</strong>
-                    <span style="float:right">
-                        <button onclick="editQuestion('${q._id}')">✏️ Edit</button>
-                        <button onclick="deleteQuestion('${q._id}')">🗑️ Delete</button>
-                    </span>
-                    <div style="font-size:0.8rem; margin-top:8px;">
-                        ${q.choices.map(c => `<span class="badge">${c.text} (${c.category})</span>`).join(' ')}
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <strong>Q${q.order}: ${escapeHtml(q.questionText)}</strong>
+                        <div>
+                            <button onclick="editQuestion('${q._id}')">✏️ Edit</button>
+                            <button onclick="deleteQuestion('${q._id}')">🗑️ Delete</button>
+                        </div>
                     </div>
-                    <div style="font-size:0.7rem;">Active: ${q.isActive ? '✅' : '❌'} | Order: ${q.order}</div>
+                    <div style="font-size:0.8rem; margin-top:8px;">
+                        ${q.choices.map(c => `<span class="badge">${escapeHtml(c.text)} (${escapeHtml(c.category)})</span>`).join(' ')}
+                    </div>
+                    <div style="font-size:0.7rem; margin-top:4px;">Active: ${q.isActive ? '✅' : '❌'} | Order: ${q.order}</div>
                 `;
                 container.appendChild(div);
             });
         } catch (err) {
-            document.getElementById('questionsList').innerHTML = '<p class="error">Failed to load questions</p>';
+            console.error(err);
+            document.getElementById('questionsList').innerHTML = '<p class="error">Failed to load questions. Make sure backend is running.</p>';
         }
     }
 
@@ -76,17 +84,24 @@
         renderForm();
     }
 
-    function editQuestion(id) {
-        fetchWithAuth('/questions/all').then(res => res.json()).then(questions => {
+    async function editQuestion(id) {
+        try {
+            const res = await fetchWithAuth('/questions/all');
+            const questions = await res.json();
             const q = questions.find(x => x._id == id);
-            if (!q) return;
+            if (!q) {
+                showMessage('message', 'Question not found', 'error');
+                return;
+            }
             editingId = id;
+            choiceFields = q.choices.map(c => ({ text: c.text, category: c.category, weight: c.weight }));
+            renderForm();
             document.getElementById('qText').value = q.questionText;
             document.getElementById('qOrder').value = q.order;
             document.getElementById('qActive').checked = q.isActive;
-            choiceFields = q.choices.map(c => ({ text: c.text, category: c.category, weight: c.weight }));
-            renderForm();
-        });
+        } catch (err) {
+            showMessage('message', 'Error loading question details', 'error');
+        }
     }
 
     function renderForm() {
@@ -94,14 +109,14 @@
             <div id="editForm" class="choice-editor">
                 <h4>${editingId ? 'Edit' : 'Add'} Question</h4>
                 <input type="text" id="qText" placeholder="Question text" style="width:100%;">
-                <div style="display:flex; gap:10px;">
-                    <input type="number" id="qOrder" placeholder="Order">
-                    <label><input type="checkbox" id="qActive" checked> Active</label>
+                <div style="display:flex; gap:10px; margin: 10px 0;">
+                    <input type="number" id="qOrder" placeholder="Order" style="width:100px;">
+                    <label style="display:flex; align-items:center;"><input type="checkbox" id="qActive" checked> Active</label>
                 </div>
                 <div id="choicesContainer"></div>
-                <button onclick="addChoice()">+ Add Choice</button>
-                <button onclick="saveQuestion()" style="background:#2c6e9e;">Save</button>
-                <button onclick="cancelEdit()">Cancel</button>
+                <button onclick="addChoice()" type="button">+ Add Choice</button>
+                <button onclick="saveQuestion()" style="background:#2c6e9e;" type="button">Save</button>
+                <button onclick="cancelEdit()" type="button">Cancel</button>
             </div>
         `;
         const existing = document.getElementById('editForm');
@@ -112,21 +127,22 @@
 
     function refreshChoicesUI() {
         const container = document.getElementById('choicesContainer');
+        if (!container) return;
         container.innerHTML = '';
         choiceFields.forEach((ch, idx) => {
             const div = document.createElement('div');
             div.className = 'choice-row';
             div.innerHTML = `
-                <input type="text" placeholder="Choice text" value="${ch.text.replace(/"/g, '&quot;')}" data-idx="${idx}" data-field="text" style="flex:2;">
+                <input type="text" placeholder="Choice text" value="${escapeHtml(ch.text)}" data-idx="${idx}" data-field="text" style="flex:2;">
                 <select data-idx="${idx}" data-field="category" style="flex:1;">
-                    <option ${ch.category === 'Technology' ? 'selected' : ''}>Technology</option>
-                    <option ${ch.category === 'Healthcare' ? 'selected' : ''}>Healthcare</option>
-                    <option ${ch.category === 'Education' ? 'selected' : ''}>Education</option>
-                    <option ${ch.category === 'Business' ? 'selected' : ''}>Business</option>
-                    <option ${ch.category === 'Creative Arts' ? 'selected' : ''}>Creative Arts</option>
+                    <option value="Technology" ${ch.category === 'Technology' ? 'selected' : ''}>Technology</option>
+                    <option value="Healthcare" ${ch.category === 'Healthcare' ? 'selected' : ''}>Healthcare</option>
+                    <option value="Education" ${ch.category === 'Education' ? 'selected' : ''}>Education</option>
+                    <option value="Business" ${ch.category === 'Business' ? 'selected' : ''}>Business</option>
+                    <option value="Creative Arts" ${ch.category === 'Creative Arts' ? 'selected' : ''}>Creative Arts</option>
                 </select>
                 <input type="number" placeholder="Weight" value="${ch.weight}" data-idx="${idx}" data-field="weight" style="width:80px;">
-                <button onclick="removeChoice(${idx})">🗑️</button>
+                <button onclick="removeChoice(${idx})" type="button">🗑️</button>
             `;
             container.appendChild(div);
         });
@@ -144,43 +160,91 @@
         });
     }
 
-    function addChoice() { choiceFields.push({ text: '', category: 'Technology', weight: 1 }); refreshChoicesUI(); }
-    function removeChoice(idx) { choiceFields.splice(idx, 1); refreshChoicesUI(); }
+    function addChoice() { 
+        choiceFields.push({ text: '', category: 'Technology', weight: 1 }); 
+        refreshChoicesUI(); 
+    }
+    
+    function removeChoice(idx) { 
+        choiceFields.splice(idx, 1); 
+        refreshChoicesUI(); 
+    }
 
     async function saveQuestion() {
+        const questionText = document.getElementById('qText').value.trim();
+        const order = parseInt(document.getElementById('qOrder').value);
+        const isActive = document.getElementById('qActive').checked;
+        if (!questionText) {
+            showMessage('message', 'Question text is required', 'error');
+            return;
+        }
+        if (choiceFields.length === 0) {
+            showMessage('message', 'At least one choice is required', 'error');
+            return;
+        }
+        const validChoices = choiceFields.every(c => c.text.trim() !== '');
+        if (!validChoices) {
+            showMessage('message', 'All choices must have text', 'error');
+            return;
+        }
         const payload = {
-            questionText: document.getElementById('qText').value,
-            order: parseInt(document.getElementById('qOrder').value),
-            isActive: document.getElementById('qActive').checked,
-            choices: choiceFields
+            questionText: questionText,
+            order: order,
+            isActive: isActive,
+            choices: choiceFields.map(c => ({ text: c.text.trim(), category: c.category, weight: parseInt(c.weight) || 1 }))
         };
         try {
             if (editingId) {
                 await fetchWithAuth(`/questions/${editingId}`, { method: 'PUT', body: JSON.stringify(payload) });
+                showMessage('message', 'Question updated successfully!', 'success');
             } else {
                 await fetchWithAuth('/questions', { method: 'POST', body: JSON.stringify(payload) });
+                showMessage('message', 'Question added successfully!', 'success');
             }
-            showMessage('message', 'Saved successfully!', 'success');
             cancelEdit();
             loadQuestions();
         } catch (err) {
-            showMessage('message', 'Error saving question', 'error');
+            console.error(err);
+            showMessage('message', 'Error saving question. Check console.', 'error');
         }
     }
 
     async function deleteQuestion(id) {
-        if (confirm('Delete this question permanently?')) {
-            try {
-                await fetchWithAuth(`/questions/${id}`, { method: 'DELETE' });
-                loadQuestions();
-                showMessage('message', 'Deleted', 'success');
-            } catch (err) {
-                showMessage('message', 'Delete failed', 'error');
-            }
+        if (!confirm('Delete this question permanently? This action cannot be undone.')) return;
+        try {
+            await fetchWithAuth(`/questions/${id}`, { method: 'DELETE' });
+            showMessage('message', 'Question deleted successfully', 'success');
+            loadQuestions();
+        } catch (err) {
+            showMessage('message', 'Delete failed', 'error');
         }
     }
 
-    function cancelEdit() { document.getElementById('editForm')?.remove(); loadQuestions(); }
+    function cancelEdit() { 
+        const form = document.getElementById('editForm');
+        if (form) form.remove();
+        loadQuestions(); 
+    }
+
+    function showMessage(elementId, msg, type) {
+        const msgDiv = document.getElementById(elementId);
+        if (msgDiv) {
+            msgDiv.textContent = msg;
+            msgDiv.className = `message ${type}`;
+            msgDiv.style.display = 'block';
+            setTimeout(() => msgDiv.style.display = 'none', 3000);
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
 
     if (checkAuth()) {
         loadQuestions();

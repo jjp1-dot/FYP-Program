@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>All Schools | FindYourProgram</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #f5f7fb;
+    min-height: 100vh;
+    padding: 40px 24px;
+}
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+.header {
+    background: linear-gradient(135deg, #0f3b4f 0%, #1e5a72 100%);
+    border-radius: 32px;
+    padding: 32px 40px;
+    color: white;
+    margin-bottom: 32px;
+}
+.header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.header p {
+    opacity: 0.85;
+    font-size: 1rem;
+}
+.button-group {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+.back-btn, .restart-btn {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 40px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+    border: none;
+    cursor: pointer;
+}
+.back-btn:hover, .restart-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+}
+.restart-btn {
+    background: #e11d48;
+}
+.restart-btn:hover {
+    background: #be123c;
+}
+.schools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+}
+.school-card {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    border: 1px solid #eef2ff;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+.school-card:hover {
+    transform: translateY(-4px);
+    border-color: #2563eb;
+    box-shadow: 0 12px 24px -12px rgba(37,99,235,0.2);
+}
+.ranking-badge {
+    display: inline-block;
+    background: #2563eb;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 40px;
+    margin-bottom: 12px;
+}
+.exam-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 40px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: white;
+}
+.exam-badge.true {
+    background: #10b981;
+}
+.exam-badge.false {
+    background: #e11d48;
+}
+.school-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.school-location {
+    font-size: 0.85rem;
+    color: #5b6e8c;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.school-website {
+    margin-top: 12px;
+}
+.school-website a {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.school-website a:hover {
+    text-decoration: underline;
+}
+.loading {
+    text-align: center;
+    padding: 60px;
+    color: #5b6e8c;
+    font-size: 1.1rem;
+}
+.no-schools {
+    text-align: center;
+    padding: 60px;
+    background: white;
+    border-radius: 32px;
+    color: #94a3b8;
+}
+.error {
+    text-align: center;
+    padding: 60px;
+    color: #e11d48;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🏫 All Schools</h1>
+        <p id="categoryDisplay">Loading category...</p>
+        <div class="button-group">
+            <a href="results.html" class="back-btn">← Back to Results</a>
+            <button id="restartBtn" class="restart-btn">⟳ Restart Assessment</button>
+        </div>
+    </div>
+    <div id="schoolsContainer" class="loading">Loading schools...</div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+
+function clearAllAssessmentData() {
+    localStorage.removeItem('answers');
+    localStorage.removeItem('assessmentAnswers');
+    localStorage.removeItem('recommendation');
+    localStorage.removeItem('fyp_user_profile');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userAge');
+    localStorage.removeItem('userGender');
+    localStorage.removeItem('userStrand');
+    localStorage.removeItem('userGrade');
+    localStorage.removeItem('profileCompleted');
+    localStorage.removeItem('assessmentStarted');
+    localStorage.removeItem('lastQuestionIndex');
+    localStorage.removeItem('topCategoryFull');
+    console.log("Full reset completed.");
+}
+
+document.getElementById('restartBtn').addEventListener('click', function() {
+    clearAllAssessmentData();
+    window.location.href = 'index.html';
+});
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+async function loadSchools() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+    const categoryDisplay = document.getElementById('categoryDisplay');
+    
+    if (!category) {
+        categoryDisplay.innerHTML = 'No category specified.';
+        document.getElementById('schoolsContainer').innerHTML = '<div class="error">❌ No category selected. Please go back and try again.</div>';
+        return;
+    }
+    
+    categoryDisplay.innerHTML = `Schools ranked in <strong>${escapeHtml(category)}</strong>`;
+    
+    try {
+        const response = await fetch(`${API_BASE}/schools`);
+        if (!response.ok) throw new Error('Failed to fetch schools');
+        const allSchools = await response.json();
+        
+        const matching = allSchools.filter(school => {
+            return school.rankings && school.rankings[category] !== undefined;
+        });
+        
+        matching.sort((a, b) => a.rankings[category] - b.rankings[category]);
+        
+        const container = document.getElementById('schoolsContainer');
+        
+        if (matching.length === 0) {
+            container.innerHTML = '<div class="no-schools">🏫 No schools found for this category in our database.</div>';
+            return;
+        }
+        
+        let html = '<div class="schools-grid">';
+        matching.forEach(school => {
+            const rank = school.rankings[category];
+            const examBadge = school.entranceExam 
+                ? '<div class="exam-badge true">✓ Entrance Exam</div>' 
+                : '<div class="exam-badge false">✗ No Entrance Exam</div>';
+            html += `
+                <div class="school-card">
+                    <div class="ranking-badge">#${rank} Ranked</div>
+                    ${examBadge}
+                    <div class="school-name">${escapeHtml(school.schoolName)}</div>
+                    <div class="school-location">📍 ${escapeHtml(school.location)}</div>
+                    ${school.website ? `<div class="school-website">🔗 <a href="${escapeHtml(school.website)}" target="_blank">Visit Website</a></div>` : ''}
+                </div>
+            `;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    } catch (err) {
+        console.error(err);
+        document.getElementById('schoolsContainer').innerHTML = '<div class="error">❌ Failed to load schools. Please check your backend connection.</div>';
+    }
+}
+
+loadSchools();
+</script>
+</body>
+</html>

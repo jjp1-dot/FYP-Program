@@ -1,0 +1,554 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>FYP | Your Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
+        /* BACKGROUND IMAGE WITH OVERLAY FOR READABILITY */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('img/bg2.png') no-repeat center center fixed;
+            background-size: cover;
+            z-index: -2;
+        }
+
+        /* Optional: semi-transparent overlay to ensure text remains readable
+           (adjust opacity as needed based on your background image) */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            z-index: -1;
+        }
+
+        /* Alternative: if you prefer a darker overlay, use rgba(0,0,0,0.4) instead */
+        /* body::after { background: rgba(0, 0, 0, 0.3); } */
+
+        .profile-card {
+            max-width: 680px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(0px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #1a3a5a 0%, #1e5a72 100%);
+            padding: 1.8rem 2rem;
+            color: white;
+        }
+
+        .card-header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-header p {
+            opacity: 0.85;
+            font-size: 0.95rem;
+        }
+
+        .form-container {
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.9rem;
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .required-star {
+            color: #ef4444;
+            font-size: 1rem;
+        }
+
+        input, select {
+            padding: 0.85rem 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background: #fefefe;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .inline-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .inline-row .input-group {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* strand wrapper (hidden by default) */
+        .strand-wrapper {
+            transition: all 0.2s;
+            margin-top: 0.25rem;
+        }
+
+        .strand-selector {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 0.2rem 0;
+        }
+
+        .info-note {
+            font-size: 0.75rem;
+            color: #4b5563;
+            margin-top: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .btn-next {
+            background: #1e5a72;
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-next:hover {
+            background: #1e4fd6;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #334155;
+            border: none;
+            padding: 0.9rem 1.8rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .error-msg {
+            color: #dc2626;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: 0;
+            height: 1px;
+            background: #eef2f6;
+        }
+
+        @media (max-width: 550px) {
+            .form-container {
+                padding: 1.5rem;
+            }
+            .card-header {
+                padding: 1.2rem 1.5rem;
+            }
+            .card-header h1 {
+                font-size: 1.6rem;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-next, .btn-secondary {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="profile-card">
+    <div class="card-header">
+        <h1>🎓 A little about you</h1>
+        <p>Your answers help us match you with the right programs and recommendations.</p>
+    </div>
+    <div class="form-container">
+        <form id="demographicForm">
+            <!-- Name -->
+            <div class="input-group">
+                <label>Full name <span class="required-star">*</span></label>
+                <input type="text" id="fullName" placeholder="e.g., Maria Santos" autocomplete="off" required>
+            </div>
+
+            <!-- Age + Gender inline -->
+            <div class="inline-row">
+                <div class="input-group">
+                    <label>Age <span class="required-star">*</span></label>
+                    <input type="number" id="age" min="11" max="99" placeholder="e.g., 16" required>
+                </div>
+                <div class="input-group">
+                    <label>Gender <span class="required-star">*</span></label>
+                    <select id="gender" required>
+                        <option value="" disabled selected>Select gender</option>
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                        <option value="Non-binary">Non-binary</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Grade Level (7–12) -->
+            <div class="input-group">
+                <label>Current grade level <span class="required-star">*</span></label>
+                <select id="gradeLevel" required>
+                    <option value="" disabled selected>Select grade</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                </select>
+            </div>
+
+            <!-- Strand section (dynamic for Senior High: grades 11 & 12) -->
+            <div class="strand-wrapper" id="strandWrapper" style="display: none;">
+                <div class="input-group strand-selector">
+                    <label>Academic Strand (Senior High) <span style="font-weight:normal;">(optional)</span></label>
+                    <select id="strandSelect">
+                        <option value="" selected>— Not specified / Choose strand —</option>
+                        <option value="STEM">STEM (Science, Technology, Engineering, Math)</option>
+                        <option value="ABM">ABM (Accountancy, Business, Management)</option>
+                        <option value="HUMSS">HUMSS (Humanities & Social Sciences)</option>
+                        <option value="GAS">GAS (General Academic Strand)</option>
+                        <option value="TVL-ICT">TVL-ICT (Information & Communications Technology)</option>
+                        <option value="TVL-HE">TVL-HE (Home Economics)</option>
+                        <option value="Arts & Design">Arts & Design</option>
+                        <option value="Sports">Sports Track</option>
+                    </select>
+                    <div class="info-note">
+                        <span>✨</span> <span>Strand helps refine program suggestions (not required).</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn-secondary" id="skipToAssessmentBtn">Skip → Start Assessment</button>
+                <button type="submit" class="btn-next">Continue <span>→</span></button>
+            </div>
+            <p style="font-size: 0.7rem; text-align: right; margin-top: 1rem; color: #5b6e8c;">*Required fields. Your data stays private.</p>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const gradeSelect = document.getElementById('gradeLevel');
+        const strandWrapper = document.getElementById('strandWrapper');
+        const strandSelect = document.getElementById('strandSelect');
+        const form = document.getElementById('demographicForm');
+        const nameInput = document.getElementById('fullName');
+        const ageInput = document.getElementById('age');
+        const genderSelect = document.getElementById('gender');
+        
+        const API_BASE = 'http://localhost:5000/api';
+        
+        function toggleStrandField() {
+            const gradeValue = gradeSelect.value;
+            const isSeniorHigh = (gradeValue === '11' || gradeValue === '12');
+            strandWrapper.style.display = isSeniorHigh ? 'block' : 'none';
+            strandSelect.required = false;
+        }
+        
+        gradeSelect.addEventListener('change', toggleStrandField);
+        toggleStrandField();
+        
+        function validateForm() {
+            let isValid = true;
+            const errorElements = document.querySelectorAll('.error-msg');
+            errorElements.forEach(el => el.remove());
+            
+            const name = nameInput.value.trim();
+            if (name === "") {
+                showError(nameInput, "Full name is required.");
+                isValid = false;
+            } else if (name.length < 2) {
+                showError(nameInput, "Please enter a valid name.");
+                isValid = false;
+            }
+            
+            const age = parseInt(ageInput.value, 10);
+            if (isNaN(age) || ageInput.value.trim() === "") {
+                showError(ageInput, "Age is required.");
+                isValid = false;
+            } else if (age < 11 || age > 99) {
+                showError(ageInput, "Please enter a realistic age (11–99).");
+                isValid = false;
+            }
+            
+            if (!genderSelect.value) {
+                showError(genderSelect, "Please select your gender.");
+                isValid = false;
+            }
+            
+            if (!gradeSelect.value) {
+                showError(gradeSelect, "Please select your current grade level.");
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function showError(inputElement, message) {
+            const parent = inputElement.closest('.input-group');
+            if (!parent) return;
+            let existingError = parent.querySelector('.error-msg');
+            if (existingError) existingError.remove();
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-msg';
+            errorDiv.innerHTML = `⚠️ ${message}`;
+            parent.appendChild(errorDiv);
+            inputElement.style.borderColor = '#fecaca';
+            inputElement.addEventListener('input', function clearError() {
+                if (parent.querySelector('.error-msg')) parent.querySelector('.error-msg').remove();
+                inputElement.style.borderColor = '#e2e8f0';
+                inputElement.removeEventListener('input', clearError);
+            }, { once: true });
+        }
+        
+        async function saveDemographicsToBackend(profile) {
+            try {
+                const response = await fetch(`${API_BASE}/users/profile`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(profile)
+                });
+                if (!response.ok) {
+                    console.warn('Failed to save profile to backend');
+                } else {
+                    console.log('Profile saved to database');
+                }
+            } catch (err) {
+                console.error('Error saving profile:', err);
+            }
+        }
+        
+        function saveDemographics() {
+            const name = nameInput.value.trim();
+            const age = parseInt(ageInput.value, 10);
+            const gender = genderSelect.value;
+            const grade = gradeSelect.value;
+            let strand = strandSelect.value;
+            if (strandWrapper.style.display === 'none') strand = '';
+            
+            const userProfile = {
+                userName: name,
+                userAge: age,
+                userGender: gender,
+                userGrade: grade,
+                userStrand: strand || '',
+                profileCompleted: true,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('fyp_user_profile', JSON.stringify(userProfile));
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userAge', age.toString());
+            localStorage.setItem('userGender', gender);
+            localStorage.setItem('userStrand', strand || '');
+            localStorage.setItem('userGrade', grade);
+            
+            // Also send to backend
+            const backendProfile = {
+                name: name,
+                age: age,
+                gender: gender,
+                gradeLevel: grade,
+                strand: strand || ''
+            };
+            saveDemographicsToBackend(backendProfile);
+        }
+        
+        function goToAssessment() {
+            window.location.href = 'question.html';
+        }
+        
+        function onSubmitHandler(event) {
+            event.preventDefault();
+            if (!validateForm()) return;
+            saveDemographics();
+            const btn = document.querySelector('.btn-next');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "✓ Saving...";
+            btn.disabled = true;
+            setTimeout(() => {
+                goToAssessment();
+            }, 150);
+        }
+        
+        function handleSkip() {
+            const name = nameInput.value.trim() || "Guest User";
+            const ageRaw = ageInput.value.trim();
+            const age = (ageRaw && !isNaN(parseInt(ageRaw,10))) ? parseInt(ageRaw,10) : 16;
+            const gender = genderSelect.value || "Not specified";
+            const grade = gradeSelect.value;
+            let strand = strandSelect.value;
+            if (strandWrapper.style.display === 'none') strand = '';
+            
+            const userProfile = {
+                userName: name,
+                userAge: age,
+                userGender: gender,
+                userGrade: grade,
+                userStrand: strand || '',
+                profileCompleted: false,
+                skipped: true,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('fyp_user_profile', JSON.stringify(userProfile));
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userAge', age.toString());
+            localStorage.setItem('userGender', gender);
+            localStorage.setItem('userStrand', strand || '');
+            localStorage.setItem('userGrade', grade);
+            
+            // Also send minimal profile to backend (optional)
+            const backendProfile = {
+                name: name,
+                age: age,
+                gender: gender,
+                gradeLevel: grade,
+                strand: strand || ''
+            };
+            saveDemographicsToBackend(backendProfile);
+            goToAssessment();
+        }
+        
+        function loadExistingProfile() {
+            const savedProfile = localStorage.getItem('fyp_user_profile');
+            if (savedProfile) {
+                try {
+                    const profile = JSON.parse(savedProfile);
+                    if (profile.userName) nameInput.value = profile.userName;
+                    if (profile.userAge) ageInput.value = profile.userAge;
+                    if (profile.userGender && ['Female', 'Male', 'Non-binary'].includes(profile.userGender)) 
+                        genderSelect.value = profile.userGender;
+                    if (profile.userGrade && ['7','8','9','10','11','12'].includes(profile.userGrade)) {
+                        gradeSelect.value = profile.userGrade;
+                        toggleStrandField();
+                        if (profile.userStrand && strandSelect) {
+                            let optionExists = false;
+                            for(let i=0; i<strandSelect.options.length; i++) {
+                                if(strandSelect.options[i].value === profile.userStrand) {
+                                    optionExists = true;
+                                    break;
+                                }
+                            }
+                            if(optionExists) strandSelect.value = profile.userStrand;
+                        }
+                    }
+                } catch(e) {}
+            }
+            const oldName = localStorage.getItem('userName');
+            if (oldName && !nameInput.value) nameInput.value = oldName;
+            const oldAge = localStorage.getItem('userAge');
+            if (oldAge && !ageInput.value) ageInput.value = oldAge;
+            const oldGender = localStorage.getItem('userGender');
+            if (oldGender && !genderSelect.value) genderSelect.value = oldGender;
+            const oldStrand = localStorage.getItem('userStrand');
+            if (oldStrand && strandSelect && !strandSelect.value) {
+                let exists = false;
+                for(let i=0; i<strandSelect.options.length; i++) {
+                    if(strandSelect.options[i].value === oldStrand) exists = true;
+                }
+                if(exists) strandSelect.value = oldStrand;
+            }
+        }
+        
+        form.addEventListener('submit', onSubmitHandler);
+        document.getElementById('skipToAssessmentBtn').addEventListener('click', handleSkip);
+        loadExistingProfile();
+        
+        gradeSelect.addEventListener('change', function() {
+            if ((gradeSelect.value === '11' || gradeSelect.value === '12') && strandWrapper.style.display === 'block') {
+                const savedStrand = localStorage.getItem('userStrand');
+                if (savedStrand && strandSelect && !strandSelect.value) {
+                    let exists = false;
+                    for(let i=0; i<strandSelect.options.length; i++) {
+                        if(strandSelect.options[i].value === savedStrand) exists = true;
+                    }
+                    if(exists) strandSelect.value = savedStrand;
+                }
+            }
+        });
+    })();
+</script>
+</body>
+</html>
