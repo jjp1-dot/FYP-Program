@@ -8,12 +8,13 @@
 
 body, html {
     height: 100%;
-    /* Added a fallback color in case the image takes time to load */
     background-color: #f0f4f8; 
 }
 
+.main-card {
+        min-height: 100%;
+    }
 .background-wrapper {
-    /* Ensure the filename matches exactly (e.g., background.png) */
     background: url('img/background.png') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
@@ -23,24 +24,22 @@ body, html {
 }   
 
 .logo-img {
-    width: 200px; /* Slightly larger for visibility */
+    width: 200px; 
     height: auto;
     
-    /* --- THE TRANSPARENCY TRICK --- */
-    /* This blends the white/checkerboard background into the site background */
     mix-blend-mode: multiply; 
-    filter: contrast(1.1); /* Makes the logo colors pop against the blend */
+    filter: contrast(1.1); 
 }
 
 .hero {
     margin-top: 80px; 
     max-width: 550px;  
     color: #1a3a5a;    
-    /* Subtle text shadow to help readability if it hits a busy background area */
+    
     text-shadow: 0px 1px 2px rgba(255,255,255,0.5); 
 }
 
-.hero h1 { /* Changed to h2 to match your HTML structure */
+.hero h1 { 
     font-size: 5rem;
     margin-bottom: 20px;    
     font-weight: 700;
@@ -61,12 +60,11 @@ body, html {
     padding-left: 20px;
 }
 
-/* Added a small bullet point accent */
 .hero li::before {
     content: "→";
     position: absolute;
     left: 0;
-    color: #f39c12; /* Matches the orange in your logo */
+    color: #f39c12; 
 }
 
 .btn-start {

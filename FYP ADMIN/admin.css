@@ -1,4 +1,4 @@
-/* Reset & Base Styles */
+
 * {
     margin: 0;
     padding: 0;
@@ -63,14 +63,12 @@ body {
 
 .nav-item i { width: 24px; }
 
-/* Main Content Area */
 .main-content {
     flex: 1;
     margin-left: 280px;
     padding: 28px 36px;
 }
 
-/* Top Bar & Admin Profile */
 .top-bar {
     display: flex;
     justify-content: space-between;
@@ -87,7 +85,6 @@ body {
     color: transparent;
 }
 
-/* Add these rules at the end of your admin.css to ensure buttons are always visible */
 .admin-profile button {
     height: 38px;
     margin: 0;
@@ -119,7 +116,6 @@ body {
     background: #be123c !important;
 }
 
-/* Ensure no other rule hides buttons */
 button {
     display: inline-flex !important;
     visibility: visible !important;
@@ -156,7 +152,6 @@ button {
     flex-shrink: 0;
 }
 
-/* Button Global Styles */
 button, .btn {
     background: #2c6e9e;
     color: white;
@@ -185,13 +180,11 @@ button:active {
     transform: translateY(0);
 }
 
-/* Fixes for disappearing buttons in Profile bar */
 .admin-profile button {
     height: 36px;
     margin: 0;
 }
 
-/* Specific button colors override */
 button[onclick*="logout"] {
     background: #e11d48 !important;
 }
@@ -200,7 +193,6 @@ button[onclick*="logout"]:hover {
     background: #be123c !important;
 }
 
-/* Dashboard Cards */
 .card {
     background: white;
     border-radius: 28px;
@@ -218,7 +210,6 @@ button[onclick*="logout"]:hover {
     gap: 10px;
 }
 
-/* Stats Grid */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -248,7 +239,6 @@ button[onclick*="logout"]:hover {
     color: #0f3b4f;
 }
 
-/* Layout Rows */
 .row {
     display: flex;
     gap: 28px;
@@ -266,7 +256,6 @@ canvas {
     width: 100% !important; 
 }
 
-/* Form Elements */
 input, textarea, select {
     width: 100%;
     padding: 12px;
@@ -285,7 +274,6 @@ input:focus {
     box-shadow: 0 0 0 3px rgba(44, 110, 158, 0.1);
 }
 
-/* Custom Items */
 .question-item, .school-item {
     background: #f9fbfd;
     border-radius: 20px;
@@ -305,7 +293,7 @@ input:focus {
     color: #475569;
 }
 
-/* Responsive Rules */
+/* Responsive  */
 @media (max-width: 1200px) {
     .row .card { min-width: 100%; }
 }

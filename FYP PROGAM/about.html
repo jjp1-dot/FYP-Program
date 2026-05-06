@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
 <title>About | FindYourProgram</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
 <style>
@@ -131,9 +131,64 @@ body::after {
     background: #1e4fd6;
     transform: translateY(-2px);
 }
+
+/* ========== MOBILE RESPONSIVE ========== */
 @media (max-width: 768px) {
-    .about-content { padding: 24px; }
-    .about-header { padding: 24px; }
+    body {
+        padding: 20px 16px;
+    }
+    .about-header {
+        padding: 24px 20px;
+    }
+    .about-header h1 {
+        font-size: 1.6rem;
+    }
+    .about-header p {
+        font-size: 0.85rem;
+    }
+    .about-content {
+        padding: 24px 20px;
+    }
+    .section {
+        margin-bottom: 28px;
+    }
+    .section h2 {
+        font-size: 1.3rem;
+        padding-left: 12px;
+    }
+    .section p, .section li {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    .members-grid {
+        gap: 8px;
+    }
+    .member-chip {
+        padding: 4px 12px;
+        font-size: 0.75rem;
+    }
+    .back-btn {
+        padding: 10px 24px;
+        font-size: 0.9rem;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-header h1 {
+        font-size: 1.4rem;
+    }
+    .section h2 {
+        font-size: 1.2rem;
+    }
+    .section li {
+        padding-left: 20px;
+    }
+    .member-chip {
+        font-size: 0.7rem;
+        padding: 4px 10px;
+    }
 }
 </style>
 </head>

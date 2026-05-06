@@ -2,353 +2,491 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" />
 <title>FYP Assessment Result</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-body {
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #f5f7fb;
-    min-height: 100vh;
-    padding: 40px 24px;
-    position: relative;
-}
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('img/bg2.png') no-repeat center center fixed;
-    background-size: cover;
-    z-index: -2;
-}
-body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.85);
-    z-index: -1;
-}
-.container {
-    max-width: 1280px;
-    margin: 0 auto;
-}
-.main-card {
-    background: white;
-    border-radius: 32px;
-    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
-    overflow: hidden;
-    margin-bottom: 32px;
-}
-.result-header {
-    background: linear-gradient(135deg, #0f3b4f 0%, #1e5a72 100%);
-    padding: 32px 40px;
-    color: white;
-}
-.result-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-    margin-bottom: 8px;
-}
-.result-header p {
-    opacity: 0.85;
-    font-size: 1rem;
-}
-.profile-summary {
-    background: #f8fafc;
-    padding: 14px 24px;
-    border-bottom: 1px solid #eef2ff;
-    font-size: 0.9rem;
-    color: #334155;
-}
-.profile-summary span {
-    font-weight: 600;
-    color: #0f3b4f;
-}
-.results-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
-    padding: 40px;
-}
-.result-details {
-    flex: 1.2;
-    min-width: 260px;
-}
-.dialogue-box {
-    background: #eef2ff;
-    padding: 20px 24px;
-    border-left: 6px solid #2563eb;
-    border-radius: 20px;
-    margin-bottom: 28px;
-    font-weight: 500;
-    font-size: 1.1rem;
-}
-.result-details h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #0f3b4f;
-    margin-bottom: 12px;
-}
-.result-details h2 span {
-    font-size: 1.2rem;
-    color: #4b5563;
-    font-weight: 500;
-}
-.insight-message {
-    background: #fef9e3;
-    padding: 12px 18px;
-    border-radius: 16px;
-    margin: 20px 0;
-    font-size: 0.95rem;
-    display: inline-block;
-}
-.program-list {
-    list-style: none;
-    margin-top: 20px;
-    margin-bottom: 30px;
-}
-.program-list li {
-    margin-bottom: 14px;
-    padding-left: 28px;
-    position: relative;
-    font-size: 1.05rem;
-}
-.program-list li::before {
-    content: "✓";
-    color: #10b981;
-    position: absolute;
-    left: 0;
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-.dual-suggestion {
-    margin-top: 24px;
-    background: #fff8e7;
-    padding: 14px 18px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    border-left: 4px solid #f59e0b;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-.secondary-schools-btn {
-    background: #10b981;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 40px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-}
-.secondary-schools-btn:hover {
-    background: #059669;
-    transform: translateY(-2px);
-}
-.compact-schools {
-    margin-top: 32px;
-    padding-top: 24px;
-    border-top: 2px solid #eef2ff;
-}
-.compact-schools h4 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #0f3b4f;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.compact-schools h4::before {
-    content: "🏫";
-    font-size: 1.2rem;
-}
-.compact-school-card {
-    background: #f8fafc;
-    border-radius: 20px;
-    padding: 14px 18px;
-    margin-bottom: 12px;
-    transition: all 0.2s;
-    border: 1px solid #eef2ff;
-}
-.compact-school-card:hover {
-    transform: translateX(5px);
-    border-color: #2563eb;
-    background: white;
-}
-.compact-school-name {
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 4px;
-}
-.compact-school-location {
-    font-size: 0.75rem;
-    color: #5b6e8c;
-    margin-bottom: 4px;
-}
-.compact-school-rank {
-    display: inline-block;
-    background: #2563eb;
-    color: white;
-    font-size: 0.65rem;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 20px;
-    margin-bottom: 8px;
-    margin-right: 8px;
-}
-.exam-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 40px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: white;
-}
-.exam-badge.true {
-    background: #10b981;
-}
-.exam-badge.false {
-    background: #e11d48;
-}
-.chart-container {
-    flex: 0.8;
-    min-width: 280px;
-    background: #ffffff;
-    border-radius: 28px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.03);
-    padding: 20px;
-    text-align: center;
-}
-.pie-chart {
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    margin: 0 auto 20px auto;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
-}
-.pie-chart:hover {
-    transform: scale(1.02);
-}
-.legend {
-    text-align: left;
-    background: #f8fafc;
-    border-radius: 24px;
-    padding: 18px;
-    margin-bottom: 20px;
-}
-.legend-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #e9eef3;
-}
-.legend-item:last-child {
-    border-bottom: none;
-}
-.legend-color {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-    margin-right: 12px;
-}
-.legend-title {
-    flex: 1;
-    font-weight: 500;
-    font-size: 0.85rem;
-}
-.legend-score {
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #1e293b;
-}
-.view-more-schools-btn {
-    background: #10b981;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 40px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    width: 100%;
-    margin-top: 10px;
-}
-.view-more-schools-btn:hover {
-    background: #059669;
-    transform: translateY(-2px);
-}
-.action-buttons {
-    display: flex;
-    gap: 16px;
-    justify-content: flex-end;
-    margin-top: 24px;
-    margin-bottom: 32px;
-}
-.btn {
-    padding: 12px 28px;
-    border-radius: 40px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-}
-.btn-primary {
-    background: #2563eb;
-    color: white;
-}
-.btn-primary:hover {
-    background: #1e4fd6;
-    transform: translateY(-2px);
-}
-.btn-secondary {
-    background: #e2e8f0;
-    color: #1e293b;
-}
-.btn-secondary:hover {
-    background: #cbd5e1;
-}
-.loading-schools {
-    text-align: center;
-    padding: 20px;
-    color: #5b6e8c;
-    font-size: 0.9rem;
-}
-.no-schools {
-    text-align: center;
-    padding: 20px;
-    color: #94a3b8;
-    background: #f8fafc;
-    border-radius: 20px;
-    font-size: 0.85rem;
-}
-@media (max-width: 850px) {
-    body { padding: 20px; }
-    .results-grid { flex-direction: column; padding: 24px; }
-    .result-header { padding: 24px; }
-    .dual-suggestion { flex-direction: column; align-items: flex-start; }
-    .secondary-schools-btn { white-space: normal; }
-}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background: #f5f7fb;
+        min-height: 100vh;
+        padding: 40px 24px;
+        position: relative;
+    }
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('img/bg2.png') no-repeat center center fixed;
+        background-size: cover;
+        z-index: -2;
+    }
+    body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.85);
+        z-index: -1;
+    }
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+    .main-card {
+        background: white;
+        border-radius: 32px;
+        box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+        overflow: hidden;
+        margin-bottom: 32px;
+    }
+    .result-header {
+        background: linear-gradient(135deg, #0f3b4f 0%, #1e5a72 100%);
+        padding: 32px 40px;
+        color: white;
+    }
+    .result-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        margin-bottom: 8px;
+    }
+    .result-header p {
+        opacity: 0.85;
+        font-size: 1rem;
+    }
+    .profile-summary {
+        background: #f8fafc;
+        padding: 14px 24px;
+        border-bottom: 1px solid #eef2ff;
+        font-size: 0.9rem;
+        color: #334155;
+    }
+    .profile-summary span {
+        font-weight: 600;
+        color: #0f3b4f;
+    }
+    .result-details {
+        padding: 40px;
+    }
+    .dialogue-box {
+        background: #eef2ff;
+        padding: 20px 24px;
+        border-left: 6px solid #2563eb;
+        border-radius: 20px;
+        margin-bottom: 28px;
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+    .ai-reasoning {
+        background: #f1f5f9;
+        padding: 18px;
+        border-radius: 20px;
+        margin: 20px 0;
+        border-left: 4px solid #8b5cf6;
+        line-height: 1.5;
+    }
+    .alternative-programs {
+        margin: 20px 0;
+    }
+    .alternative-programs .badge {
+        background: #e2e8f0;
+        padding: 6px 14px;
+        border-radius: 40px;
+        font-size: 0.8rem;
+        margin-right: 8px;
+        display: inline-block;
+        margin-bottom: 8px;
+    }
+    .confidence-badge {
+        display: inline-block;
+        background: #f59e0b;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 40px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 12px;
+        vertical-align: middle;
+    }
+    .confidence-high { background: #10b981; }
+    .confidence-medium { background: #f59e0b; }
+    .confidence-low { background: #ef4444; }
+    .compact-schools {
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 2px solid #eef2ff;
+    }
+    .compact-schools h4 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #0f3b4f;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .compact-schools h4::before {
+        content: "🏫";
+        font-size: 1.2rem;
+    }
+    .compact-school-card {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 18px;
+        margin-bottom: 16px;
+        transition: all 0.2s;
+        border: 1px solid #eef2ff;
+    }
+    .compact-school-card:hover {
+        transform: translateX(6px);
+        border-color: #2563eb;
+        background: white;
+    }
+    .compact-school-name {
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 6px;
+    }
+    .compact-school-location {
+        font-size: 0.75rem;
+        color: #5b6e8c;
+        margin-bottom: 6px;
+    }
+    .compact-school-rank {
+        display: inline-block;
+        background: #2563eb;
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+        margin-right: 8px;
+    }
+    .exam-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 40px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: white;
+    }
+    .exam-badge.true {
+        background: #10b981;
+    }
+    .exam-badge.false {
+        background: #e11d48;
+    }
+    .view-more-schools-btn {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+        margin-top: 24px;
+    }
+    .view-more-schools-btn:hover {
+        background: #059669;
+        transform: translateY(-2px);
+    }
+    .action-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+        margin-top: 24px;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+    }
+    .btn {
+        padding: 12px 28px;
+        border-radius: 40px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+    }
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+    .btn-primary:hover {
+        background: #1e4fd6;
+        transform: translateY(-2px);
+    }
+    .btn-secondary {
+        background: #e2e8f0;
+        color: #1e293b;
+    }
+    .btn-secondary:hover {
+        background: #cbd5e1;
+    }
+    .btn-download {
+        background: #10b981;
+        color: white;
+    }
+    .btn-download:hover {
+        background: #059669;
+    }
+    .loading-schools {
+        text-align: center;
+        padding: 20px;
+        color: #5b6e8c;
+        font-size: 0.9rem;
+    }
+    .no-schools {
+        text-align: center;
+        padding: 20px;
+        color: #94a3b8;
+        background: #f8fafc;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+
+    /* ========== MOBILE RESPONSIVE ========== */
+    @media (max-width: 850px) {
+        body {
+            padding: 20px;
+        }
+        .result-header {
+            padding: 20px;
+        }
+        .result-header h1 {
+            font-size: 1.6rem;
+        }
+        .result-header p {
+            font-size: 0.85rem;
+        }
+        .result-details {
+            padding: 24px;
+        }
+        .dialogue-box {
+            padding: 14px 16px;
+            margin-bottom: 20px;
+        }
+        .dialogue-box h2 {
+            font-size: 1.2rem;
+        }
+        .confidence-badge {
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            margin-left: 6px;
+        }
+        .ai-reasoning {
+            padding: 14px;
+            font-size: 0.85rem;
+        }
+        .alternative-programs .badge {
+            padding: 4px 10px;
+            font-size: 0.7rem;
+        }
+        .compact-schools h4 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+        .compact-school-card {
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .compact-school-name {
+            font-size: 0.9rem;
+        }
+        .compact-school-location {
+            font-size: 0.7rem;
+        }
+        .exam-badge {
+            padding: 2px 8px;
+            font-size: 0.6rem;
+        }
+        .view-more-schools-btn {
+            margin-top: 16px;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+        }
+        .action-buttons {
+            justify-content: center;
+            gap: 12px;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 550px) {
+        body {
+            padding: 12px;
+        }
+        .result-header h1 {
+            font-size: 1.3rem;
+        }
+        .result-details {
+            padding: 16px;
+        }
+        .dialogue-box h2 {
+            font-size: 1rem;
+        }
+        .confidence-badge {
+            font-size: 0.55rem;
+            padding: 2px 6px;
+        }
+        .ai-reasoning {
+            font-size: 0.8rem;
+            padding: 10px;
+        }
+        .alternative-programs .badge {
+            padding: 3px 8px;
+            font-size: 0.65rem;
+        }
+        .compact-school-rank {
+            font-size: 0.6rem;
+            padding: 2px 6px;
+        }
+        .compact-school-name {
+            font-size: 0.85rem;
+        }
+        .action-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .btn {
+            width: 100%;
+            text-align: center;
+        }
+        .view-more-schools-btn {
+            font-size: 0.8rem;
+        }
+    }
+
+    
+    @media print {
+        body {
+            background: white;
+            padding: 0;
+            margin: 0;
+        }
+        body::before, body::after {
+            display: none;
+        }
+        .action-buttons, .view-more-schools-btn, #downloadPdfBtn, #reloadBtn, #restartBtn {
+            display: none !important;
+        }
+        .main-card {
+            box-shadow: none;
+            border-radius: 0;
+            margin: 0.4in auto 0 auto;
+            width: 100%;
+            max-width: 100%;
+        }
+        .result-header {
+            background: #0f3b4f;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            padding: 8px 20px;
+            margin-bottom: 6px;
+        }
+        .result-header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+        }
+        .result-header p {
+            font-size: 0.8rem;
+            margin: 0;
+        }
+        .profile-summary {
+            padding: 4px 20px;
+            font-size: 0.75rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #eef2ff;
+            margin-bottom: 8px;
+        }
+        .result-details {
+            padding: 10px 20px 30px 20px;
+        }
+        .dialogue-box {
+            padding: 8px 14px;
+            margin-bottom: 14px;
+        }
+        .dialogue-box h2 {
+            font-size: 1.1rem;
+            margin-top: 6px;
+            margin-bottom: 0;
+        }
+        .confidence-badge {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            margin-left: 8px;
+        }
+        .ai-reasoning {
+            margin: 14px 0;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .alternative-programs {
+            margin: 14px 0;
+        }
+        .alternative-programs .badge {
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            margin-right: 6px;
+            margin-bottom: 4px;
+        }
+        .compact-schools {
+            margin-top: 18px;
+            padding-top: 8px;
+            border-top: 1px solid #eef2ff;
+        }
+        .compact-schools h4 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        .compact-school-card {
+            padding: 8px 12px;
+            margin-bottom: 12px;
+        }
+        .compact-school-rank {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            margin-bottom: 4px;
+        }
+        .compact-school-name {
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+        .compact-school-location {
+            font-size: 0.7rem;
+            margin-bottom: 2px;
+        }
+        .exam-badge {
+            padding: 2px 8px;
+            font-size: 0.6rem;
+            margin-bottom: 4px;
+        }
+        .compact-school-website a {
+            font-size: 0.65rem;
+        }
+        .compact-school-card:last-child {
+            margin-bottom: 0;
+        }
+    }
 </style>
 </head>
 <body>
@@ -356,28 +494,26 @@ body::after {
     <div class="main-card">
         <div class="result-header">
             <h1>🎯 Your Personalized Result</h1>
-            <p>Based on your 20 answers, we found the best path for you</p>
+            <p>Based on your answers, we found the best path for you</p>
         </div>
         <div id="profileSummary" class="profile-summary" style="display: none;"></div>
-        <div class="results-grid">
-            <div class="result-details" id="resultContainer">
-                <!-- main result content will be inserted here -->
-            </div>
-            <div class="chart-container">
-                <div id="pieChart" class="pie-chart"></div>
-                <div class="legend" id="legend"></div>
-                <button id="viewMoreSchoolsBtn" class="view-more-schools-btn">🔍 View More Schools →</button>
-            </div>
+        <div class="result-details" id="resultContainer">
+            
+        </div>
+        <div style="padding: 0 40px 40px 40px;">
+            <button id="viewMoreSchoolsBtn" class="view-more-schools-btn">🔍 View More Schools →</button>
         </div>
     </div>
 
     <div class="action-buttons">
+        <button id="downloadPdfBtn" class="btn btn-download">📄 Download Results (PDF)</button>
         <button id="reloadBtn" class="btn btn-secondary">⟳ Reload Results</button>
         <button id="restartBtn" class="btn btn-primary">⟳ Restart Assessment</button>
     </div>
 </div>
 
 <script>
+
 const API_BASE = 'http://localhost:5000/api';
 
 function escapeHtml(str) {
@@ -422,6 +558,10 @@ document.getElementById('viewMoreSchoolsBtn').addEventListener('click', function
     } else {
         alert('School list page coming soon!');
     }
+});
+
+document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+    window.print();
 });
 
 function displayProfileSummary() {
@@ -490,197 +630,72 @@ function renderCompactSchools(schools, categoryName) {
     html += `</div>`;
     return html;
 }
-
-function choiceTextToLetter(choiceText) {
-    const lowerText = choiceText.toLowerCase();
-    if (lowerText.includes("math") || lowerText.includes("problem solving")) return "A";
-    if (lowerText.includes("science") || lowerText.includes("experiments")) return "B";
-    if (lowerText.includes("writing") || lowerText.includes("literature") || lowerText.includes("communication")) return "C";
-    if (lowerText.includes("business") || lowerText.includes("entrepreneurship")) return "D";
-    if (lowerText.includes("drawing") || lowerText.includes("design") || lowerText.includes("creative")) return "E";
-    const firstChar = choiceText.charAt(0);
-    if (["A","B","C","D","E"].includes(firstChar)) return firstChar;
-    return "A";
-}
-
-async function fetchLatestResponseFromBackend(userName) {
-    if (!userName) return null;
-    try {
-        const response = await fetch(`${API_BASE}/responses/latest?name=${encodeURIComponent(userName)}`);
-        if (response.ok) {
-            const data = await response.json();
-            if (data.answers && Array.isArray(data.answers)) {
-                const letters = data.answers.map(ans => choiceTextToLetter(ans.selectedChoice));
-                if (letters.length === 20) return letters;
-            }
-        }
-    } catch (err) {
-        console.warn('Could not fetch latest response:', err);
-    }
-    return null;
+function mapProgramToCategory(program) {
+    const p = program.toLowerCase();
+    if (p.includes("information technology") || p.includes("computer science") || p.includes("software") || p.includes("data science") || p.includes("it") || p.includes("programming") || p.includes("computing")) 
+        return "Technology & Computing";
+    if (p.includes("nursing") || p.includes("medical") || p.includes("health") || p.includes("biology") || p.includes("biochemistry") || p.includes("pharmacy") || p.includes("medicine") || p.includes("life sciences") || p.includes("radiology") || p.includes("physical therapy"))
+        return "Health & Life Sciences";
+    if (p.includes("education") || p.includes("teaching") || p.includes("pedagogy") || p.includes("early childhood") || p.includes("secondary education"))
+        return "Education & Social Sciences";
+    if (p.includes("business") || p.includes("accountancy") || p.includes("marketing") || p.includes("management") || p.includes("entrepreneurship") || p.includes("finance") || p.includes("administration"))
+        return "Business & Management";
+    if (p.includes("multimedia") || p.includes("design") || p.includes("arts") || p.includes("animation") || p.includes("film") || p.includes("creative") || p.includes("digital media") || p.includes("graphic design"))
+        return "Creative Arts & Media";
+    return "Technology & Computing";
 }
 
 window.onload = async function() {
-    let answers = [];
-
-    const letterAnswers = JSON.parse(localStorage.getItem('answers')) || [];
-    if (letterAnswers.length === 20 && letterAnswers.every(l => l !== null)) {
-        answers = letterAnswers;
-        console.log("Found letter answers:", answers);
+    let recommendation = null;
+    const storedRec = localStorage.getItem('recommendation');
+    if (storedRec) {
+        try {
+            recommendation = JSON.parse(storedRec);
+        } catch(e) {}
     }
 
-    if (answers.length === 0) {
-        const indexAnswers = JSON.parse(localStorage.getItem('assessmentAnswers')) || [];
-        if (indexAnswers.length === 20 && indexAnswers.some(i => i !== null)) {
-            answers = indexAnswers.map(i => i !== null ? String.fromCharCode(65 + i) : null);
-            console.log("Converted index answers to letters:", answers);
-        }
-    }
-
-    if (answers.length === 0) {
-        const userName = localStorage.getItem('userName') || '';
-        const backendLetters = await fetchLatestResponseFromBackend(userName);
-        if (backendLetters && backendLetters.length === 20) {
-            answers = backendLetters;
-            localStorage.setItem('answers', JSON.stringify(answers));
-            console.log("Restored from backend:", answers);
-        }
-    }
-
-    if (answers.length === 0 || answers.every(a => a === null)) {
+    if (!recommendation || !recommendation.recommendedProgram) {
         document.getElementById("resultContainer").innerHTML = `
             <div class="dialogue-box" style="background:#fff3e0; border-left-color:#f97316;">
                 ⚠️ No assessment data found.
             </div>
             <p>Please complete the assessment first.</p>
         `;
-        document.getElementById('pieChart').style.background = "#e2e8f0";
-        document.getElementById('legend').innerHTML = '<div style="text-align:center;">Complete assessment to see results</div>';
         displayProfileSummary();
         return;
     }
 
-    let scores = {
-        "Technology": 0,
-        "Health & Science": 0,
-        "Education & Social Science": 0,
-        "Business": 0,
-        "Creative & Media": 0
-    };
-    answers.forEach(a => {
-        if (a === "A") scores["Technology"]++;
-        else if (a === "B") scores["Health & Science"]++;
-        else if (a === "C") scores["Education & Social Science"]++;
-        else if (a === "D") scores["Business"]++;
-        else if (a === "E") scores["Creative & Media"]++;
-    });
+    let confidenceClass = "confidence-medium";
+    if (recommendation.confidence === "High") confidenceClass = "confidence-high";
+    else if (recommendation.confidence === "Low") confidenceClass = "confidence-low";
 
-    console.log("Final scores:", scores);
-
-    const total = Object.values(scores).reduce((a,b) => a+b, 0) || 1;
-    const sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
-    const topCategoryShort = sorted[0];
-    const categoryFullName = {
-        "Technology": "Technology & Computing",
-        "Health & Science": "Health & Life Sciences",
-        "Education & Social Science": "Education & Social Sciences",
-        "Business": "Business & Management",
-        "Creative & Media": "Creative Arts & Media"
-    };
-    const topCategoryFull = categoryFullName[topCategoryShort];
-    const topScore = scores[topCategoryShort];
-
-    // Store top category for the "View More Schools" button
-    localStorage.setItem('topCategoryFull', topCategoryFull);
-
-    const programMap = {
-        "Technology": ["💻 Computer Science", "📱 Information Technology", "🖥️ Software Engineering"],
-        "Health & Science": ["🩺 Nursing", "🔬 Biology", "🧪 Medical Technology"],
-        "Education & Social Science": ["📚 Education", "🧠 Psychology", "🗣️ Communication"],
-        "Business": ["📈 Business Administration", "📊 Marketing", "🚀 Entrepreneurship"],
-        "Creative & Media": ["🎨 Multimedia Arts", "✏️ Graphic Design", "🎬 Film & Media"]
-    };
-
-    const colorMap = {
-        "Technology": "#3b82f6",
-        "Health & Science": "#10b981",
-        "Education & Social Science": "#f59e0b",
-        "Business": "#ef4444",
-        "Creative & Media": "#db2777"
-    };
-
-    let insightMessage = topScore >= 8 ? "🌟 Strong alignment!" :
-                         topScore >= 5 ? "📌 Good match!" :
-                         "🌱 You show some interest here — explore related programs!";
-
-    let secondCategoryShort = sorted[1];
-    let secondCategoryFull = categoryFullName[secondCategoryShort] || '';
-    let dualSuggestion = "";
-    if (secondCategoryShort && (topScore - scores[secondCategoryShort]) <= 2 && scores[secondCategoryShort] > 0) {
-        dualSuggestion = `
-            <div class="dual-suggestion">
-                <span>💡 You also scored well in <strong>${secondCategoryFull}</strong>.</span>
-                <button id="viewSecondarySchoolsBtn" class="secondary-schools-btn">🏫 View Schools</button>
-            </div>
-        `;
-    }
-
-    // Build main result HTML
     let resultHtml = `
-        <div class="dialogue-box">🎓 Your most suitable field is:</div>
-        <h2>${topCategoryFull} <span>(${topScore} pts)</span></h2>
-        <div class="insight-message">${insightMessage}</div>
-        <ul class="program-list">${programMap[topCategoryShort].map(p => `<li>${p}</li>`).join('')}</ul>
-        ${dualSuggestion}
+        <div class="dialogue-box">
+            🎓 Your most suitable field is:
+            <h2>${escapeHtml(recommendation.recommendedProgram)} <span class="confidence-badge ${confidenceClass}">${escapeHtml(recommendation.confidence || "Medium")} confidence</span></h2>
+        </div>
+        <div class="ai-reasoning">
+            <strong>🤖 AI Analysis:</strong> ${escapeHtml(recommendation.reasoning || "Based on your answers, this program is an excellent fit.")}
+        </div>
     `;
 
-    // Fetch top schools and append compact list
-    const topSchools = await fetchTopSchoolsForCategory(topCategoryFull, 3);
+    if (recommendation.alternativePrograms && recommendation.alternativePrograms.length) {
+        resultHtml += `<div class="alternative-programs">
+            <strong>📌 Also consider:</strong> ${recommendation.alternativePrograms.map(p => `<span class="badge">${escapeHtml(p)}</span>`).join(' ')}
+        </div>`;
+    }
+
+    const mappedCategory = mapProgramToCategory(recommendation.recommendedProgram);
+    localStorage.setItem('topCategoryFull', mappedCategory);
+
+    const topSchools = await fetchTopSchoolsForCategory(mappedCategory, 3);
     if (topSchools.length > 0) {
-        resultHtml += renderCompactSchools(topSchools, topCategoryFull);
+        resultHtml += renderCompactSchools(topSchools, mappedCategory);
     } else {
         resultHtml += `<div class="compact-schools"><h4>🏫 Top Schools</h4><div class="no-schools">No top schools found for this category.</div></div>`;
     }
 
     document.getElementById("resultContainer").innerHTML = resultHtml;
-
-    // Add event listener for the secondary schools button if it exists
-    const secondaryBtn = document.getElementById('viewSecondarySchoolsBtn');
-    if (secondaryBtn && secondCategoryFull) {
-        secondaryBtn.addEventListener('click', function() {
-            window.location.href = `schools.html?category=${encodeURIComponent(secondCategoryFull)}`;
-        });
-    }
-
-    // Pie chart
-    let accPercent = 0;
-    let slices = [];
-    for (let [cat, val] of Object.entries(scores)) {
-        let percent = (val / total) * 100;
-        if (percent > 0) {
-            slices.push({ color: colorMap[cat], start: accPercent, end: accPercent + percent });
-        }
-        accPercent += percent;
-    }
-    let gradient = slices.length ? `conic-gradient(${slices.map(s => `${s.color} ${s.start}% ${s.end}%`).join(', ')})` : '#e2e8f0';
-    document.getElementById('pieChart').style.background = gradient;
-
-    const legend = document.getElementById("legend");
-    legend.innerHTML = '';
-    for (let [cat, val] of Object.entries(scores)) {
-        let percent = total ? ((val/total)*100).toFixed(1) : 0;
-        let item = document.createElement('div');
-        item.className = 'legend-item';
-        item.innerHTML = `
-            <div class="legend-header">
-                <div class="legend-color" style="background:${colorMap[cat]};"></div>
-                <div class="legend-title">${categoryFullName[cat]}</div>
-                <div class="legend-score">${val} pts (${percent}%)</div>
-            </div>
-        `;
-        legend.appendChild(item);
-    }
-
     displayProfileSummary();
 };
 </script>

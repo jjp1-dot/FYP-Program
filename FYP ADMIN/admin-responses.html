@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Responses | Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .search-bar input {
+            width: 250px;
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 10px;
+            border-bottom: 1px solid #eef2ff;
+        }
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: #f9fbfd;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #5b6e8c;
+        }
+        .download-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        .download-btn:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <div class="sidebar">
+        <div class="logo">
+            <h2><i class="fas fa-graduation-cap"></i> FYP: ADMIN</h2>
+        </div>
+        <div class="nav">
+            <a href="admin-dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+            <a href="admin-questions.html" class="nav-item"><i class="fas fa-question-circle"></i><span>Questions</span></a>
+            <a href="admin-schools.html" class="nav-item"><i class="fas fa-school"></i><span>Schools</span></a>
+            <a href="admin-responses.html" class="nav-item active"><i class="fas fa-comments"></i><span>Responses</span></a>
+            <a href="admin-cms.html" class="nav-item"><i class="fas fa-user-cog"></i><span>CMS</span></a>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title"><h1>User Responses</h1><p>All submitted assessments</p></div>
+            <div class="admin-profile"><span>Admin</span><div class="avatar">A</div><button onclick="logout()" style="background:#e11d48;">Logout</button></div>
+        </div>
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+                <h3><i class="fas fa-list"></i> Assessment Records</h3>
+                <div class="search-bar">
+                    <input type="text" id="searchName" placeholder="Search by name..." autocomplete="off">
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table id="responsesTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>Strand</th>
+                            <th>Grade</th>
+                            <th>Recommended Program</th>
+                            <th>Confidence</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="responsesBody">
+                        <tr><td colspan="9" class="no-data">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="admin.js"></script>
+<script>
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    let allResponses = [];
+    let filteredResponses = [];
+
+    async function loadResponses() {
+        try {
+            const res = await fetchWithAuth('/responses/all');
+            if (!res.ok) throw new Error(`HTTP ${res.status} - ${await res.text()}`);
+            allResponses = await res.json();
+            console.log(`Loaded ${allResponses.length} responses`);
+            allResponses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            applySearchAndRender();
+        } catch (err) {
+            console.error("Load responses error:", err);
+            document.getElementById('responsesBody').innerHTML = '<tr><td colspan="9" class="no-data">Failed to load responses: ' + escapeHtml(err.message) + '</td></tr>';
+        }
+    }
+
+    function applySearchAndRender() {
+        const searchTerm = document.getElementById('searchName').value.toLowerCase().trim();
+        if (searchTerm === "") {
+            filteredResponses = [...allResponses];
+        } else {
+            filteredResponses = allResponses.filter(r => (r.name || "").toLowerCase().includes(searchTerm));
+        }
+        renderTable();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('responsesBody');
+        if (filteredResponses.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" class="no-data">No responses found.</td></tr>';
+            return;
+        }
+        let html = '';
+        for (const r of filteredResponses) {
+            html += `<tr>
+                <td>${escapeHtml(r.name || '')}</td>
+                <td>${r.age || ''}</td>
+                <td>${escapeHtml(r.gender || '')}</td>
+                <td>${escapeHtml(r.strand || '')}</td>
+                <td>${escapeHtml(r.gradeLevel || '')}</td>
+                <td>${escapeHtml(r.recommendedProgram || '')}</td>
+                <td>${escapeHtml(r.confidence || '')}</td>
+                <td>${r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ''}</td>
+                <td><button class="download-btn" data-id="${r._id}">📄 Download</button></td>
+            </tr>`;
+        }
+        tbody.innerHTML = html;
+
+        document.querySelectorAll('.download-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const response = filteredResponses.find(r => r._id === id);
+                if (response) downloadSingleResponse(response);
+            });
+        });
+    }
+
+    function downloadSingleResponse(response) {
+        const headers = ["Name","Age","Gender","Strand","Grade Level","Recommended Program","Confidence","Date","AI Used","Reasoning"];
+        const dateStr = response.createdAt ? new Date(response.createdAt).toLocaleDateString() : '';
+        const reasoning = response.reasoning || '';
+        const aiUsed = response.isAI ? "Yes" : "No";
+        const row = [
+            response.name || '',
+            response.age || '',
+            response.gender || '',
+            response.strand || '',
+            response.gradeLevel || '',
+            response.recommendedProgram || '',
+            response.confidence || '',
+            dateStr,
+            aiUsed,
+            reasoning
+        ];
+        const csvContent = [headers, row].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+        const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute("download", `response_${response.name || 'user'}_${new Date(response.createdAt).toISOString().slice(0,19)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('searchName').addEventListener('input', applySearchAndRender);
+
+    if (checkAuth()) {
+        loadResponses();
+        highlightActiveNav();
+    }
+</script>
+</body>
+</html>

@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FYP Assessment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>FindYourProgram | Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -11,12 +13,15 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Inter', Arial, Helvetica, sans-serif;
-            background: #f5f6f8;
-            height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f7fb;
+            min-height: 100vh;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            position: relative;
         }
-        
         body::before {
             content: "";
             position: fixed;
@@ -28,8 +33,6 @@
             background-size: cover;
             z-index: -2;
         }
-
-        /* Semi-transparent overlay to ensure text remains readable */
         body::after {
             content: "";
             position: fixed;
@@ -37,201 +40,402 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.85);
             z-index: -1;
         }
-        /* ========== LEFT SIDEBAR ========== */
-        .sidebar {
-            width: 280px;
-            background: white;
-            border-right: 1px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
-            padding: 24px 16px;
-            overflow-y: auto;
-        }
-        .sidebar h3 {
-            font-size: 18px;
-            margin-bottom: 16px;
-            color: #0f3b4f;
-            font-weight: 700;
-        }
-        .questions-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-        .nav-question {
+        .container {
+            max-width: 750px;
             width: 100%;
-            padding: 12px 16px;
-            background: #f1f5f9;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            color: #334155;
-            text-align: left;
-            font-size: 14px;
+            margin: 0 auto;
         }
-        .nav-question:hover {
-            background: #cbd5e1;
-            transform: translateX(4px);
-        }
-        .nav-question.active {
-            background: #1a3a5a;
-            color: white;
-            box-shadow: 0 2px 8px rgba(37,99,235,0.3);
-        }
-        .nav-question.answered {
-            background: #22c55e;
-            color: white;
-        }
-        .nav-question.answered.active {
-            background: #1a3a5a;
-        }
-        .progress-info {
-            margin-top: auto;
-            padding-top: 24px;
-            border-top: 1px solid #e2e8f0;
-        }
-        .progress-text {
-            font-size: 14px;
-            color: #475569;
-            margin-bottom: 8px;
-        }
-        .sidebar-progress-bar {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .sidebar-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: #1a3a5a;
-            border-radius: 4px;
-            transition: width 0.3s;
-        }
-        /* ========== RIGHT MAIN CONTENT ========== */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            padding: 40px 48px;
-        }
-        /* Header with centered logo - FORCED TRANSPARENT BACKGROUND */
         .header {
+            text-align: center;
             margin-bottom: 32px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
         }
         .logo-container {
             display: flex;
-            align-items: center;
             justify-content: center;
-            width: 100%;
-            margin-bottom: 12px;
-            background: transparent !important;
+            margin-bottom: 16px;
         }
         .assessment-logo {
-            max-height: 80px;
+            max-height: 70px;
             width: auto;
-            object-fit: contain;
-            transition: transform 0.2s ease;
-            /* CRITICAL: These properties remove white background from logo images */
-            background: transparent !important;
+            background: transparent;
             mix-blend-mode: multiply;
-            filter: brightness(1.05) contrast(1.1);
-        }
-        /* Alternative: If the logo has a white background, this will remove it */
-        .assessment-logo {
-            background-color: transparent;
-        }
-        .assessment-logo:hover {
-            transform: scale(1.02);
         }
         .tagline {
-            font-size: 14px;
-            color: #475569;
+            font-size: 0.9rem;
+            color: #64748b;
             letter-spacing: -0.2px;
-            text-align: center;
-            background: transparent;
         }
-        #question-container {
-            background: white;
-            padding: 32px;
-            border-radius: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        .progress-section {
             margin-bottom: 24px;
         }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+        .question-counter {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #475569;
+        }
+        .motivation-message {
+            font-size: 0.75rem;
+            color: #10b981;
+            font-weight: 500;
+        }
+        .progress-bar-bg {
+            background: #e2e8f0;
+            border-radius: 12px;
+            height: 6px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: #10b981;
+            border-radius: 12px;
+            transition: width 0.3s ease;
+        }
+        .question-card {
+            background: white;
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            border: 1px solid #eef2ff;
+        }
         #question-text {
-            font-size: 26px;
+            font-size: 1.6rem;
             font-weight: 700;
-            margin-bottom: 28px;
-            color: #1e293b;
+            margin-bottom: 32px;
+            color: #0f3b4f;
+            line-height: 1.3;
         }
         .option-btn {
             display: block;
             width: 100%;
             padding: 14px 20px;
-            margin: 10px 0;
-            font-size: 16px;
+            margin: 12px 0;
+            font-size: 1rem;
             border: none;
-            border-radius: 16px;
+            border-radius: 20px;
             cursor: pointer;
             text-align: left;
             transition: all 0.2s;
             background: #f8fafc;
             color: #1e293b;
             font-weight: 500;
+            border: 1px solid #eef2ff;
         }
         .option-btn:hover {
             background: #1a3a5a;
             color: white;
             transform: translateX(6px);
+            border-color: #1a3a5a;
         }
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; padding: 16px; gap: 12px; }
-            .questions-nav { flex-direction: row; flex-wrap: wrap; order: 1; }
-            .nav-question { width: auto; padding: 8px 12px; }
-            .progress-info { order: 2; margin-top: 0; padding-top: 0; border-top: none; }
-            .main-content { padding: 24px; }
-            #question-text { font-size: 20px; }
-            .assessment-logo { max-height: 60px; }
+        @media (max-width: 600px) {
+            .question-card { padding: 24px; }
+            #question-text { font-size: 1.3rem; }
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s;
+        }
+        .loading-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #1a3a5a;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #1a3a5a;
+        }
+        .loading-subtext {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
-<div class="sidebar">
-    <h3>Questions</h3>
-    <div class="questions-nav" id="questionsNav"></div>
-    <div class="progress-info">
-        <div class="progress-text">Overall Progress</div>
-        <div class="sidebar-progress-bar">
-            <div class="sidebar-progress-fill" id="sidebarProgressFill"></div>
-        </div>
-        <div class="progress-text" id="progressCount">0/20 answered</div>
-    </div>
-</div>
-<div class="main-content">
+<div class="container">
     <div class="header">
-        <!-- Logo centered with transparency fixes -->
         <div class="logo-container">
             <img src="img/logo2.png" alt="FindYourProgram Logo" class="assessment-logo">
         </div>
-        <div class="tagline">Discover your ideal college path</div>
+        <div class="tagline">Your future starts with one answer at a time</div>
     </div>
-    <div id="question-container">
+    <div class="progress-section">
+        <div class="progress-header">
+            <div class="question-counter" id="questionCounter">Question 1</div>
+            <div class="motivation-message" id="motivationMessage">🌟 Let's begin!</div>
+        </div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+    </div>
+    <div class="question-card">
         <div id="question-text">Loading questions...</div>
         <div id="options-container"></div>
     </div>
 </div>
-<script src="script.js"></script>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text">🎓 Analyzing your answers...</div>
+    <div class="loading-subtext">Our AI is finding the best program for you</div>
+</div>
+
+<script>
+   
+    let questions = [];      
+    let currentIndex = 0;    
+    let answers = [];       
+    let answeredIds = new Set(); 
+    let stopping = false;
+
+    
+    const MIN_ANSWERS = 6;   
+    const CHECK_CONFIDENCE_AFTER = 3; 
+
+    const questionTextDiv = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const motivationMessage = document.getElementById('motivationMessage');
+    const questionCounterSpan = document.getElementById('questionCounter');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    async function loadQuestions() {
+        try {
+            const res = await fetch('http://localhost:5000/api/questions');
+            if (!res.ok) throw new Error('Failed to load questions');
+            questions = await res.json();
+            
+            answers = [];
+            answeredIds.clear();
+            currentIndex = 0;
+            updateProgressAndMotivation();
+            renderCurrentQuestion();
+        } catch (err) {
+            console.error(err);
+            questionTextDiv.innerText = 'Failed to load questions. Please refresh.';
+            motivationMessage.innerText = '⚠️ Error loading questions.';
+        }
+    }
+
+    function updateProgressAndMotivation() {
+        const answeredCount = answers.length;
+        const total = questions.length;
+        const percent = (answeredCount / total) * 100;
+        progressBarFill.style.width = `${percent}%`;
+        if (questionCounterSpan) {
+            
+            if (currentIndex < questions.length && !stopping) {
+                questionCounterSpan.innerText = `Question ${answeredCount + 1}`;
+            }
+        }
+        let message = '';
+        if (answeredCount === 0) message = '🌟 Ready? Answer the first question!';
+        else if (answeredCount === total) message = '🎉 You did it! Submitting your results...';
+        else if (answeredCount <= Math.floor(total * 0.25)) message = '🚀 Great start! Keep going!';
+        else if (answeredCount <= Math.floor(total * 0.5)) message = '📈 Halfway there! You’re doing great.';
+        else if (answeredCount <= Math.floor(total * 0.75)) message = '⚡ Almost there! Just a few more.';
+        else message = '💪 Final stretch! Finish strong.';
+        motivationMessage.innerText = message;
+    }
+
+    function renderCurrentQuestion() {
+        if (currentIndex >= questions.length) {
+           
+            submitAssessment();
+            return;
+        }
+        const q = questions[currentIndex];
+        if (!q) return;
+        questionTextDiv.innerText = q.questionText;
+        optionsContainer.innerHTML = '';
+        q.choices.forEach((choice, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = `${String.fromCharCode(65+idx)}. ${choice.text}`;
+            btn.addEventListener('click', () => selectOption(currentIndex, idx));
+            optionsContainer.appendChild(btn);
+        });
+        if (questionCounterSpan) {
+            questionCounterSpan.innerText = `Question ${answers.length + 1}`;
+        }
+    }
+
+    async function selectOption(qIdx, choiceIndex) {
+        if (stopping) return;
+
+        const q = questions[qIdx];
+        const choice = q.choices[choiceIndex];
+        const answerObj = {
+            questionId: q._id,
+            questionText: q.questionText,
+            selectedChoice: choice.text,
+            category: choice.category,
+            weight: choice.weight || 1,
+            qIdx: qIdx,
+            choiceIdx: choiceIndex
+        };
+        answers.push(answerObj);
+        answeredIds.add(qIdx);
+
+        if (answers.length >= MIN_ANSWERS && answers.length % CHECK_CONFIDENCE_AFTER === 0) {
+            const confident = await checkConfidence();
+            if (confident) {
+                await submitAssessment();
+                return;
+            }
+        }
+
+  
+        if (answers.length === questions.length) {
+            await submitAssessment();
+            return;
+        }
+
+        let nextIndex = currentIndex + 1;
+        while (nextIndex < questions.length && answeredIds.has(nextIndex)) {
+            nextIndex++;
+        }
+        if (nextIndex >= questions.length) {
+ 
+            await submitAssessment();
+            return;
+        }
+        currentIndex = nextIndex;
+        updateProgressAndMotivation();
+        renderCurrentQuestion();
+    }
+
+    async function checkConfidence() {
+    
+        const currentAnswers = answers.map(a => ({
+            questionText: a.questionText,
+            selectedChoice: a.selectedChoice,
+            category: a.category,
+            weight: a.weight
+        }));
+        const userInfo = {
+            name: localStorage.getItem('userName') || 'Anonymous',
+            age: parseInt(localStorage.getItem('userAge')) || 18,
+            gender: localStorage.getItem('userGender') || 'not specified',
+            strand: localStorage.getItem('userStrand') || 'Not provided',
+            gradeLevel: localStorage.getItem('userGrade') || 'Not provided'
+        };
+        try {
+            const res = await fetch('http://localhost:5000/api/ai/check-confidence', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userInfo, answers: currentAnswers })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.confident) {
+                    console.log("AI confident, stopping early. Recommendation:", data.recommendedProgram);
+                  
+                    if (data.recommendedProgram) {
+                        const fakeRec = {
+                            recommendedProgram: data.recommendedProgram,
+                            reasoning: data.reasoning || "The AI is highly confident based on your answers.",
+                            confidence: "High",
+                            isAI: true,
+                            alternativePrograms: []
+                        };
+                        localStorage.setItem('recommendation', JSON.stringify(fakeRec));
+                    }
+                    return true;
+                }
+            }
+        } catch (err) {
+            console.error("Confidence check error:", err);
+        }
+        return false;
+    }
+
+    async function submitAssessment() {
+        if (stopping) return;
+        stopping = true;
+        loadingOverlay.classList.add('show');
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => btn.disabled = true);
+        motivationMessage.innerText = '📤 Analyzing your answers...';
+
+        const userInfo = {
+            name: localStorage.getItem('userName') || 'Anonymous',
+            age: parseInt(localStorage.getItem('userAge')) || 18,
+            gender: localStorage.getItem('userGender') || 'not specified',
+            strand: localStorage.getItem('userStrand') || 'Not provided',
+            gradeLevel: localStorage.getItem('userGrade') || 'Not provided'
+        };
+
+        const answerDetails = answers.map(a => ({
+            questionText: a.questionText,
+            selectedChoice: a.selectedChoice,
+            category: a.category,
+            weight: a.weight
+        }));
+
+        const payload = { ...userInfo, answers: answerDetails };
+
+        try {
+            const response = await fetch('http://localhost:5000/api/responses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (response.ok) {
+                const result = await response.json();
+                localStorage.setItem('recommendation', JSON.stringify(result));
+                localStorage.removeItem('adaptiveAssessment');
+                window.location.href = 'results.html';
+            } else {
+                const errText = await response.text();
+                alert(`Submission failed: ${response.status} - ${errText}`);
+                window.location.reload();
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network error. Is the backend running?');
+            loadingOverlay.classList.remove('show');
+            allBtns.forEach(btn => btn.disabled = false);
+            motivationMessage.innerText = '❌ Submit failed. Please try again.';
+            stopping = false;
+        }
+    }
+
+    loadQuestions();
+</script>
 </body>
 </html>

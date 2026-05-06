@@ -2,11 +2,103 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Manage Schools | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="admin.css">
+    <style>
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+                padding: 1rem;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .logo {
+                margin-bottom: 0;
+            }
+            .nav {
+                margin-top: 0;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .nav-item {
+                padding: 8px 12px;
+                margin: 0;
+                font-size: 0.8rem;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .admin-profile {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .card {
+                padding: 20px;
+            }
+            .card > div:first-child {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            /* rankings grid */
+            #schoolForm div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+                gap: 8px;
+            }
+            .school-item {
+                padding: 16px;
+            }
+            .school-header {
+                font-size: 1rem;
+            }
+            .detail {
+                font-size: 0.8rem;
+            }
+            .actions button {
+                margin-right: 8px;
+                padding: 6px 12px;
+            }
+        }
+        @media (max-width: 480px) {
+            .sidebar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .nav {
+                justify-content: center;
+            }
+            .nav-item {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+            .page-title h1 {
+                font-size: 1.3rem;
+            }
+            .card h3 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="admin-container">
@@ -16,7 +108,8 @@
             <a href="admin-dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
             <a href="admin-questions.html" class="nav-item"><i class="fas fa-question-circle"></i><span>Questions</span></a>
             <a href="admin-schools.html" class="nav-item active"><i class="fas fa-school"></i><span>Schools</span></a>
-            <a href="admin-cms.html" class="nav-item"><i class="fas fa-palette"></i><span>CMS</span></a>
+            <a href="admin-responses.html" class="nav-item"><i class="fas fa-comments"></i><span>Responses</span></a>
+            <a href="admin-cms.html" class="nav-item"><i class="fas fa-user-cog"></i><span>CMS</span></a>
         </div>
     </div>
     <div class="main-content">
@@ -147,7 +240,7 @@
             if (!response.ok) throw new Error('Save failed');
             showMessage(editingSchoolId ? 'School updated successfully!' : 'School added successfully!', 'success');
             cancelSchoolForm();
-            loadSchools(); // reload from database
+            loadSchools(); 
         } catch (err) {
             console.error(err);
             showMessage('Error saving school. Make sure you are logged in.', 'error');

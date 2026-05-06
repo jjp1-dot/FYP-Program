@@ -30,6 +30,11 @@ async function fetchWithAuth(url, options = {}) {
         window.location.href = 'admin-login.html';
         throw new Error('Session expired');
     }
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Fetch error: ${response.status} ${url}`, errorText);
+        throw new Error(`HTTP ${response.status}`);
+    }
     return response;
 }
 
@@ -50,7 +55,6 @@ function highlightActiveNav() {
     });
 }
 
-// Helper for temporary messages (used in CMS page)
 function showMessage(elementId, msg, type) {
     const el = document.getElementById(elementId);
     if (el) {
@@ -61,7 +65,6 @@ function showMessage(elementId, msg, type) {
     }
 }
 
-// CMS settings – still needed to load site title for sidebar and page title
 let currentCMSSettings = {};
 
 async function loadCMSSettings() {
@@ -78,21 +81,17 @@ async function loadCMSSettings() {
 }
 
 function applyCMSSettings() {
-    // Update sidebar logo text (site title is still used)
     const logoH2 = document.querySelector('.sidebar .logo h2');
     if (logoH2 && currentCMSSettings.siteTitle) {
         logoH2.innerHTML = `<i class="fas fa-graduation-cap"></i> ${currentCMSSettings.siteTitle}`;
     }
-    // Update page title (the h1 inside .page-title)
     const pageTitleH1 = document.querySelector('.page-title h1');
     if (pageTitleH1 && currentCMSSettings.siteTitle) {
         pageTitleH1.textContent = currentCMSSettings.siteTitle;
     }
-    // Update browser tab title
     if (currentCMSSettings.siteTitle) {
         document.title = `${currentCMSSettings.siteTitle} | Admin`;
     }
-    // Apply primary color to buttons (optional)
     if (currentCMSSettings.primaryColor) {
         document.documentElement.style.setProperty('--primary-color', currentCMSSettings.primaryColor);
         const buttons = document.querySelectorAll('button:not(.view-more-schools-btn):not(.btn-secondary)');
