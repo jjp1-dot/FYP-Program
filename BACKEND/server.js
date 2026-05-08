@@ -130,7 +130,6 @@ async function startServer() {
             console.log("✅ Default CMS settings created");
         }
 
-        // ---------- Public Routes ----------
         app.get('/', (req, res) => res.send('FYP Backend is running'));
         app.get('/api/questions', async (req, res) => {
             try {
@@ -190,7 +189,6 @@ async function startServer() {
             }
         });
 
-        // ---------- Admin Routes (Protected) ----------
         app.post('/api/admin/login', async (req, res) => {
             const { username, password } = req.body;
             if (!username || !password) return res.status(400).json({ message: 'Username and password required' });
@@ -340,9 +338,6 @@ async function startServer() {
             }
         });
 
-        // ========== HYBRID ADAPTIVE ENDPOINTS ==========
-
-        // 1. Confidence check
         app.post('/api/ai/check-confidence', async (req, res) => {
             const { userInfo, answers } = req.body;
             if (!answers || !answers.length) return res.status(400).json({ message: 'Answers required' });
@@ -377,7 +372,6 @@ async function startServer() {
             res.json({ confidence, tentativeRecommendation });
         });
 
-        // 2. Generate AI interjection question
         app.post('/api/ai/generate-question', async (req, res) => {
             const { answers, tentativeRecommendation } = req.body;
             if (!answers || !answers.length) return res.status(400).json({ message: 'Answers required' });
@@ -410,7 +404,7 @@ Example output:
             } catch (err) {
                 console.error("AI question generation error:", err);
             }
-            // Fallback generic question
+           
             res.json({
                 questionText: "How strongly do you feel about pursuing this field?",
                 choices: [
@@ -423,7 +417,7 @@ Example output:
             });
         });
 
-        // ========== MAIN SUBMISSION ROUTE ==========
+        
         app.post('/api/responses', async (req, res) => {
             console.log("📥 Received submission request");
             try {
