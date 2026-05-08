@@ -190,7 +190,7 @@ async function startServer() {
             }
         });
 
-        // ---------- Admin Routes ----------
+        // ---------- Admin Routes (Protected) ----------
         app.post('/api/admin/login', async (req, res) => {
             const { username, password } = req.body;
             if (!username || !password) return res.status(400).json({ message: 'Username and password required' });
@@ -245,60 +245,86 @@ async function startServer() {
             }
         });
 
+        // Admin CRUD for questions
         app.get('/api/questions/all', authenticateToken, async (req, res) => {
             try {
                 const questions = await questionsCollection.find().sort({ order: 1 }).toArray();
                 res.json(questions);
-            } catch (err) { res.status(500).json({ message: err.message }); }
+            } catch (err) {
+                res.status(500).json({ message: err.message });
+            }
         });
         app.post('/api/questions', authenticateToken, async (req, res) => {
             try {
                 const result = await questionsCollection.insertOne(req.body);
                 res.status(201).json({ ...req.body, _id: result.insertedId });
-            } catch (err) { res.status(500).json({ message: err.message }); }
+            } catch (err) {
+                res.status(500).json({ message: err.message });
+            }
         });
         app.put('/api/questions/:id', authenticateToken, async (req, res) => {
             try {
                 const { id } = req.params;
                 await questionsCollection.updateOne({ _id: new ObjectId(id) }, { $set: req.body });
                 res.json({ message: 'Updated' });
-            } catch (err) { res.status(500).json({ message: err.message }); }
+            } catch (err) {
+                res.status(500).json({ message: err.message });
+            }
         });
         app.delete('/api/questions/:id', authenticateToken, async (req, res) => {
             try {
                 const { id } = req.params;
                 await questionsCollection.deleteOne({ _id: new ObjectId(id) });
                 res.json({ message: 'Deleted' });
-            } catch (err) { res.status(500).json({ message: err.message }); }
+            } catch (err) {
+                res.status(500).json({ message: err.message });
+            }
         });
+
+        // Admin CRUD for schools
         app.post('/api/schools', authenticateToken, async (req, res) => {
             try {
                 const result = await schoolsCollection.insertOne(req.body);
                 res.status(201).json({ ...req.body, _id: result.insertedId });
-            } catch (err) { res.status(500).json({ message: err.message }); }
+            } catch (err) {
+                res.status(500).json({ message: err.message });
+            }
         });
         app.put('/api/schools/:id', authenticateToken, async (req, res) => {
             try {
                 const { id } = req.params;
                 await schoolsCollection.updateOne({ _id: new ObjectId(id) }, { $set: req.body });
                 res.json({ message: 'Updated' });
-            } catch (err) { res.status(500).json({ message: err.message }); }
+            } catch (err) {
+                res.status(500).json({ message: err.message });
+            }
         });
         app.delete('/api/schools/:id', authenticateToken, async (req, res) => {
             try {
                 const { id } = req.params;
                 await schoolsCollection.deleteOne({ _id: new ObjectId(id) });
                 res.json({ message: 'Deleted' });
-            } catch (err) { res.status(500).json({ message: err.message }); }
+            } catch (err) {
+                res.status(500).json({ message: err.message });
+            }
         });
+
+        // CMS update
         app.put('/api/cms', authenticateToken, async (req, res) => {
             try {
                 const existing = await cmsCollection.findOne();
-                if (existing) await cmsCollection.updateOne({ _id: existing._id }, { $set: req.body });
-                else await cmsCollection.insertOne(req.body);
+                if (existing) {
+                    await cmsCollection.updateOne({ _id: existing._id }, { $set: req.body });
+                } else {
+                    await cmsCollection.insertOne(req.body);
+                }
                 res.json({ message: 'CMS updated' });
-            } catch (err) { res.status(500).json({ message: err.message }); }
+            } catch (err) {
+                res.status(500).json({ message: err.message });
+            }
         });
+
+        // Admin profile update
         app.put('/api/admin/profile', authenticateToken, async (req, res) => {
             const { username, password } = req.body;
             const adminId = req.user.id;
@@ -309,14 +335,17 @@ async function startServer() {
                 if (password) updateFields.password = password;
                 await adminsCollection.updateOne({ _id: new ObjectId(adminId) }, { $set: updateFields });
                 res.json({ message: 'Admin profile updated successfully' });
-            } catch (err) { res.status(500).json({ message: 'Server error' }); }
+            } catch (err) {
+                res.status(500).json({ message: 'Server error' });
+            }
         });
 
+        // ========== HYBRID ADAPTIVE ENDPOINTS ==========
+
+        // 1. Confidence check
         app.post('/api/ai/check-confidence', async (req, res) => {
             const { userInfo, answers } = req.body;
-            if (!answers || !answers.length) {
-                return res.status(400).json({ message: 'Answers required' });
-            }
+            if (!answers || !answers.length) return res.status(400).json({ message: 'Answers required' });
             const scores = {};
             for (const ans of answers) {
                 const cat = ans.category;
@@ -326,24 +355,77 @@ async function startServer() {
             const topScore = sorted[0]?.[1] || 0;
             const secondScore = sorted[1]?.[1] || 0;
             const lead = topScore - secondScore;
-            // Deterministic rule: 8+ answers and lead >= 5 => confident
-            if (answers.length >= 8 && lead >= 5) {
-                let topCategory = sorted[0][0];
-                const programMap = {
-                    "Technology": "BS Information Technology",
-                    "Healthcare": "BS Nursing",
-                    "Education": "BS Education",
-                    "Business": "BS Business Administration",
-                    "Creative Arts": "BS Multimedia Arts"
-                };
-                const recommendedProgram = programMap[topCategory] || "General Studies";
-                return res.json({ confident: true, recommendedProgram, reasoning: "Based on your consistent preferences, this program is a great fit." });
+            const answeredCount = answers.length;
+            let confidence = "Low";
+            let tentativeRecommendation = null;
+            const programMap = {
+                "Technology": "BS Information Technology",
+                "Healthcare": "BS Nursing",
+                "Education": "BS Education",
+                "Business": "BS Business Administration",
+                "Creative Arts": "BS Multimedia Arts"
+            };
+            if (answeredCount >= 8 && lead >= 5) {
+                confidence = "High";
+                const topCategory = sorted[0][0];
+                tentativeRecommendation = programMap[topCategory] || "General Studies";
+            } else if (answeredCount >= 6 && lead >= 3) {
+                confidence = "Medium";
+                const topCategory = sorted[0][0];
+                tentativeRecommendation = programMap[topCategory] || "General Studies";
             }
-            res.json({ confident: false });
+            res.json({ confidence, tentativeRecommendation });
         });
 
-        // ========== RESPONSES SUBMISSION ROUTE ==========
+        // 2. Generate AI interjection question
+        app.post('/api/ai/generate-question', async (req, res) => {
+            const { answers, tentativeRecommendation } = req.body;
+            if (!answers || !answers.length) return res.status(400).json({ message: 'Answers required' });
+            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const prompt = `You are a career guidance AI. Based on the student's answers so far, you have a tentative recommendation: ${tentativeRecommendation || "unknown"}. Generate a single multiple‑choice question (with 5 options) to confirm or refine this recommendation. The question should probe the student's interest in that field. Return ONLY a valid JSON object with: "questionText" and "choices" (array of 5 objects, each with "text" and "category"). The category should be the same as the tentative recommendation's category.
+
+Here are the student's answers so far:
+${JSON.stringify(answers, null, 2)}
+
+Example output:
+{
+  "questionText": "How interested are you in designing user interfaces?",
+  "choices": [
+    {"text": "Very interested", "category": "Technology"},
+    {"text": "Somewhat interested", "category": "Technology"},
+    {"text": "Neutral", "category": "Technology"},
+    {"text": "Not very interested", "category": "Technology"},
+    {"text": "Not at all", "category": "Technology"}
+  ]
+}`;
+            try {
+                const result = await model.generateContent(prompt);
+                const text = result.response.text();
+                const match = text.match(/\{[\s\S]*\}/);
+                if (match) {
+                    const question = JSON.parse(match[0]);
+                    return res.json(question);
+                }
+            } catch (err) {
+                console.error("AI question generation error:", err);
+            }
+            // Fallback generic question
+            res.json({
+                questionText: "How strongly do you feel about pursuing this field?",
+                choices: [
+                    { text: "Very strongly", category: "General" },
+                    { text: "Somewhat strongly", category: "General" },
+                    { text: "Neutral", category: "General" },
+                    { text: "Weakly", category: "General" },
+                    { text: "Not at all", category: "General" }
+                ]
+            });
+        });
+
+        // ========== MAIN SUBMISSION ROUTE ==========
         app.post('/api/responses', async (req, res) => {
+            console.log("📥 Received submission request");
             try {
                 const { name, age, gender, strand, gradeLevel, answers } = req.body;
                 const scores = {};
@@ -366,7 +448,6 @@ async function startServer() {
                 let confidence = deterministicConfidence;
                 let isAI = false;
 
-                // Try AI recommendation
                 try {
                     const userInfo = { name, age, gender, strand, gradeLevel };
                     const aiResult = await getAIRecommendation(answers, userInfo);
@@ -406,7 +487,6 @@ async function startServer() {
                     alternativePrograms = getAlternativePrograms(topCategory);
                 }
 
-                // Save to database
                 const responseDoc = {
                     name, age, gender,
                     strand: strand || '',
@@ -422,9 +502,10 @@ async function startServer() {
                     createdAt: new Date()
                 };
                 await responsesCollection.insertOne(responseDoc);
+                console.log("✅ Response saved, returning result");
                 res.json({ recommendedProgram, alternativePrograms, reasoning, confidence, isAI });
             } catch (err) {
-                console.error(err);
+                console.error("❌ Error in /api/responses:", err);
                 res.status(500).json({ message: err.message });
             }
         });
