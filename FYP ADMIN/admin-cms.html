@@ -85,7 +85,7 @@
 
         try {
             const res = await fetchWithAuth('/admin/profile', { method: 'PUT', body: JSON.stringify(payload) });
-            // Check if response is JSON
+            
             const contentType = res.headers.get('content-type');
             if (!contentType || !contentType.includes('application/json')) {
                 const text = await res.text();

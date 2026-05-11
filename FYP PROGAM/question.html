@@ -7,182 +7,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f5f7fb;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            position: relative;
-        }
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('img/bg2.png') no-repeat center center fixed;
-            background-size: cover;
-            z-index: -2;
-        }
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            z-index: -1;
-        }
-        .container {
-            max-width: 750px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        .logo-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-        .assessment-logo {
-            max-height: 70px;
-            width: auto;
-            background: transparent;
-            mix-blend-mode: multiply;
-        }
-        .tagline {
-            font-size: 0.9rem;
-            color: #64748b;
-            letter-spacing: -0.2px;
-        }
-        .progress-section {
-            margin-bottom: 24px;
-        }
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 6px;
-        }
-        .question-counter {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #475569;
-        }
-        .motivation-message {
-            font-size: 0.75rem;
-            color: #10b981;
-            font-weight: 500;
-        }
-        .progress-bar-bg {
-            background: #e2e8f0;
-            border-radius: 12px;
-            height: 6px;
-            overflow: hidden;
-        }
-        .progress-bar-fill {
-            width: 0%;
-            height: 100%;
-            background: #10b981;
-            border-radius: 12px;
-            transition: width 0.3s ease;
-        }
-        .question-card {
-            background: white;
-            border-radius: 32px;
-            padding: 32px;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
-            border: 1px solid #eef2ff;
-        }
-        #question-text {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 32px;
-            color: #0f3b4f;
-            line-height: 1.3;
-        }
-        .option-btn {
-            display: block;
-            width: 100%;
-            padding: 14px 20px;
-            margin: 12px 0;
-            font-size: 1rem;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-            background: #f8fafc;
-            color: #1e293b;
-            font-weight: 500;
-            border: 1px solid #eef2ff;
-        }
-        .option-btn:hover {
-            background: #1a3a5a;
-            color: white;
-            transform: translateX(6px);
-            border-color: #1a3a5a;
-        }
-        @media (max-width: 600px) {
-            .question-card { padding: 24px; }
-            #question-text { font-size: 1.3rem; }
-        }
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(4px);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            visibility: hidden;
-            opacity: 0;
-            transition: visibility 0.2s, opacity 0.2s;
-        }
-        .loading-overlay.show {
-            visibility: visible;
-            opacity: 1;
-        }
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid #e2e8f0;
-            border-top-color: #1a3a5a;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 20px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .loading-text {
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: #1a3a5a;
-        }
-        .loading-subtext {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-top: 8px;
-        }
+        /* (keep all existing styles – unchanged) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f5f7fb; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; position: relative; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('img/bg2.png') no-repeat center center fixed; background-size: cover; z-index: -2; }
+        body::after { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); z-index: -1; }
+        .container { max-width: 750px; width: 100%; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 32px; }
+        .logo-container { display: flex; justify-content: center; margin-bottom: 16px; }
+        .assessment-logo { max-height: 70px; width: auto; background: transparent; mix-blend-mode: multiply; }
+        .tagline { font-size: 0.9rem; color: #64748b; }
+        .progress-section { margin-bottom: 24px; }
+        .progress-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+        .question-counter { font-size: 0.75rem; font-weight: 500; color: #475569; }
+        .motivation-message { font-size: 0.75rem; color: #10b981; font-weight: 500; }
+        .progress-bar-bg { background: #e2e8f0; border-radius: 12px; height: 6px; overflow: hidden; }
+        .progress-bar-fill { width: 0%; height: 100%; background: #10b981; border-radius: 12px; transition: width 0.3s ease; }
+        .question-card { background: white; border-radius: 32px; padding: 32px; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15); border: 1px solid #eef2ff; }
+        #question-text { font-size: 1.6rem; font-weight: 700; margin-bottom: 32px; color: #0f3b4f; line-height: 1.3; }
+        .option-btn { display: block; width: 100%; padding: 14px 20px; margin: 12px 0; font-size: 1rem; border: none; border-radius: 20px; cursor: pointer; text-align: left; transition: all 0.2s; background: #f8fafc; color: #1e293b; font-weight: 500; border: 1px solid #eef2ff; }
+        .option-btn:hover { background: #1a3a5a; color: white; transform: translateX(6px); border-color: #1a3a5a; }
+        @media (max-width: 600px) { .question-card { padding: 24px; } #question-text { font-size: 1.3rem; } }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: center; justify-content: center; flex-direction: column; visibility: hidden; opacity: 0; transition: visibility 0.2s, opacity 0.2s; }
+        .loading-overlay.show { visibility: visible; opacity: 1; }
+        .spinner { width: 60px; height: 60px; border: 4px solid #e2e8f0; border-top-color: #1a3a5a; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-size: 1.2rem; font-weight: 500; color: #1a3a5a; }
+        .loading-subtext { font-size: 0.85rem; color: #64748b; margin-top: 8px; }
     </style>
 </head>
 <body>
@@ -215,16 +66,16 @@
 </div>
 
 <script>
-   
-    let questions = [];      
-    let currentIndex = 0;    
-    let answers = [];       
-    let answeredIds = new Set(); 
+    // ---------- HYBRID ADAPTIVE ASSESSMENT ----------
+    let fixedQuestions = [];      // 20 database questions
+    let currentFixedIndex = 0;   // next fixed question index
+    let answers = [];             // all answered questions (fixed + AI)
+    let answeredFixedIds = new Set();
     let stopping = false;
+    let waitingForAIQuestion = false;
 
-    
-    const MIN_ANSWERS = 6;   
-    const CHECK_CONFIDENCE_AFTER = 3; 
+    const MIN_ANSWERS_FOR_CONFIDENCE = 6;
+    const CHECK_INTERVAL = 3;     // check confidence every 3 answers
 
     const questionTextDiv = document.getElementById('question-text');
     const optionsContainer = document.getElementById('options-container');
@@ -233,17 +84,17 @@
     const questionCounterSpan = document.getElementById('questionCounter');
     const loadingOverlay = document.getElementById('loadingOverlay');
 
+    // ----- Load fixed questions from backend -----
     async function loadQuestions() {
         try {
             const res = await fetch('http://localhost:5000/api/questions');
             if (!res.ok) throw new Error('Failed to load questions');
-            questions = await res.json();
-            
+            fixedQuestions = await res.json();
             answers = [];
-            answeredIds.clear();
-            currentIndex = 0;
+            answeredFixedIds.clear();
+            currentFixedIndex = 0;
             updateProgressAndMotivation();
-            renderCurrentQuestion();
+            renderCurrentFixedQuestion();
         } catch (err) {
             console.error(err);
             questionTextDiv.innerText = 'Failed to load questions. Please refresh.';
@@ -253,32 +104,31 @@
 
     function updateProgressAndMotivation() {
         const answeredCount = answers.length;
-        const total = questions.length;
-        const percent = (answeredCount / total) * 100;
+        const totalFixed = fixedQuestions.length;
+        const percent = (answeredCount / totalFixed) * 100;
         progressBarFill.style.width = `${percent}%`;
-        if (questionCounterSpan) {
-            
-            if (currentIndex < questions.length && !stopping) {
-                questionCounterSpan.innerText = `Question ${answeredCount + 1}`;
-            }
+        if (questionCounterSpan && !waitingForAIQuestion) {
+            questionCounterSpan.innerText = `Question ${answeredCount + 1}`;
         }
         let message = '';
         if (answeredCount === 0) message = '🌟 Ready? Answer the first question!';
-        else if (answeredCount === total) message = '🎉 You did it! Submitting your results...';
-        else if (answeredCount <= Math.floor(total * 0.25)) message = '🚀 Great start! Keep going!';
-        else if (answeredCount <= Math.floor(total * 0.5)) message = '📈 Halfway there! You’re doing great.';
-        else if (answeredCount <= Math.floor(total * 0.75)) message = '⚡ Almost there! Just a few more.';
+        else if (answeredCount === totalFixed) message = '🎉 You did it! Submitting your results...';
+        else if (answeredCount <= Math.floor(totalFixed * 0.25)) message = '🚀 Great start! Keep going!';
+        else if (answeredCount <= Math.floor(totalFixed * 0.5)) message = '📈 Halfway there! You’re doing great.';
+        else if (answeredCount <= Math.floor(totalFixed * 0.75)) message = '⚡ Almost there! Just a few more.';
         else message = '💪 Final stretch! Finish strong.';
         motivationMessage.innerText = message;
     }
 
-    function renderCurrentQuestion() {
-        if (currentIndex >= questions.length) {
-           
+    // ----- Render next fixed question (skip already answered) -----
+    function renderCurrentFixedQuestion() {
+        if (waitingForAIQuestion) return;
+        if (currentFixedIndex >= fixedQuestions.length) {
+            // No more fixed questions – submit
             submitAssessment();
             return;
         }
-        const q = questions[currentIndex];
+        const q = fixedQuestions[currentFixedIndex];
         if (!q) return;
         questionTextDiv.innerText = q.questionText;
         optionsContainer.innerHTML = '';
@@ -286,7 +136,7 @@
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.innerText = `${String.fromCharCode(65+idx)}. ${choice.text}`;
-            btn.addEventListener('click', () => selectOption(currentIndex, idx));
+            btn.addEventListener('click', () => onFixedOptionSelected(currentFixedIndex, idx));
             optionsContainer.appendChild(btn);
         });
         if (questionCounterSpan) {
@@ -294,53 +144,102 @@
         }
     }
 
-    async function selectOption(qIdx, choiceIndex) {
+    // ----- Handle answer to a fixed question -----
+    async function onFixedOptionSelected(qIdx, choiceIdx) {
         if (stopping) return;
-
-        const q = questions[qIdx];
-        const choice = q.choices[choiceIndex];
+        const q = fixedQuestions[qIdx];
+        const choice = q.choices[choiceIdx];
         const answerObj = {
-            questionId: q._id,
             questionText: q.questionText,
             selectedChoice: choice.text,
             category: choice.category,
             weight: choice.weight || 1,
-            qIdx: qIdx,
-            choiceIdx: choiceIndex
+            questionId: q._id,
+            isAIGenerated: false
         };
         answers.push(answerObj);
-        answeredIds.add(qIdx);
+        answeredFixedIds.add(qIdx);
+        updateProgressAndMotivation();
 
-        if (answers.length >= MIN_ANSWERS && answers.length % CHECK_CONFIDENCE_AFTER === 0) {
-            const confident = await checkConfidence();
-            if (confident) {
+        // Check confidence at intervals
+        if (answers.length >= MIN_ANSWERS_FOR_CONFIDENCE && answers.length % CHECK_INTERVAL === 0) {
+            const { confidence, tentativeRecommendation } = await checkConfidence();
+            if (confidence === "High") {
                 await submitAssessment();
                 return;
+            } else if (confidence === "Medium") {
+                // Ask AI to generate a verification question
+                const aiQuestion = await fetchAIQuestion(tentativeRecommendation);
+                if (aiQuestion) {
+                    waitingForAIQuestion = true;
+                    renderAIQuestion(aiQuestion);
+                    return;
+                }
+                // if AI question generation fails, just continue
             }
         }
 
-  
-        if (answers.length === questions.length) {
+        // Move to next unanswered fixed question
+        let next = currentFixedIndex + 1;
+        while (next < fixedQuestions.length && answeredFixedIds.has(next)) next++;
+        if (next >= fixedQuestions.length) {
             await submitAssessment();
             return;
         }
-
-        let nextIndex = currentIndex + 1;
-        while (nextIndex < questions.length && answeredIds.has(nextIndex)) {
-            nextIndex++;
-        }
-        if (nextIndex >= questions.length) {
- 
-            await submitAssessment();
-            return;
-        }
-        currentIndex = nextIndex;
-        updateProgressAndMotivation();
-        renderCurrentQuestion();
+        currentFixedIndex = next;
+        renderCurrentFixedQuestion();
     }
 
+    // ----- Render an AI-generated question -----
+    function renderAIQuestion(aiQuestion) {
+        questionTextDiv.innerText = aiQuestion.questionText;
+        optionsContainer.innerHTML = '';
+        aiQuestion.choices.forEach((choice, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = `${String.fromCharCode(65+idx)}. ${choice.text}`;
+            btn.addEventListener('click', () => onAIQuestionAnswered(choice.category, choice.text, aiQuestion.questionText));
+            optionsContainer.appendChild(btn);
+        });
+        if (questionCounterSpan) {
+            questionCounterSpan.innerText = "✨ AI Verification Question";
+        }
+        motivationMessage.innerText = "🤖 AI is asking an extra question to better understand you.";
+    }
+
+    // ----- Handle answer to AI-generated question -----
+    async function onAIQuestionAnswered(category, selectedChoice, questionText) {
+        if (stopping) return;
+        const answerObj = {
+            questionText: questionText,
+            selectedChoice: selectedChoice,
+            category: category,
+            weight: 1,
+            isAIGenerated: true
+        };
+        answers.push(answerObj);
+        updateProgressAndMotivation();
+        waitingForAIQuestion = false;
+
+        // After AI question, re‑check confidence
+        const { confidence, tentativeRecommendation } = await checkConfidence();
+        if (confidence === "High") {
+            await submitAssessment();
+            return;
+        }
+        // If still not high, continue with next fixed question
+        let next = currentFixedIndex + 1;
+        while (next < fixedQuestions.length && answeredFixedIds.has(next)) next++;
+        if (next >= fixedQuestions.length) {
+            await submitAssessment();
+            return;
+        }
+        currentFixedIndex = next;
+        renderCurrentFixedQuestion();
+    }
+
+    // ----- Call backend to check confidence -----
     async function checkConfidence() {
-    
         const currentAnswers = answers.map(a => ({
             questionText: a.questionText,
             selectedChoice: a.selectedChoice,
@@ -362,28 +261,40 @@
             });
             if (res.ok) {
                 const data = await res.json();
-                if (data.confident) {
-                    console.log("AI confident, stopping early. Recommendation:", data.recommendedProgram);
-                  
-                    if (data.recommendedProgram) {
-                        const fakeRec = {
-                            recommendedProgram: data.recommendedProgram,
-                            reasoning: data.reasoning || "The AI is highly confident based on your answers.",
-                            confidence: "High",
-                            isAI: true,
-                            alternativePrograms: []
-                        };
-                        localStorage.setItem('recommendation', JSON.stringify(fakeRec));
-                    }
-                    return true;
-                }
+                console.log("Confidence check:", data);
+                return data;
             }
         } catch (err) {
             console.error("Confidence check error:", err);
         }
-        return false;
+        return { confidence: "Low", tentativeRecommendation: null };
     }
 
+    // ----- Ask backend to generate an AI question -----
+    async function fetchAIQuestion(tentativeRecommendation) {
+        const currentAnswers = answers.map(a => ({
+            questionText: a.questionText,
+            selectedChoice: a.selectedChoice,
+            category: a.category,
+            weight: a.weight
+        }));
+        try {
+            const res = await fetch('http://localhost:5000/api/ai/generate-question', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ answers: currentAnswers, tentativeRecommendation })
+            });
+            if (res.ok) {
+                const question = await res.json();
+                return question;
+            }
+        } catch (err) {
+            console.error("Generate AI question error:", err);
+        }
+        return null;
+    }
+
+    // ----- Final submission (uses your existing /api/responses) -----
     async function submitAssessment() {
         if (stopping) return;
         stopping = true;
@@ -418,7 +329,6 @@
             if (response.ok) {
                 const result = await response.json();
                 localStorage.setItem('recommendation', JSON.stringify(result));
-                localStorage.removeItem('adaptiveAssessment');
                 window.location.href = 'results.html';
             } else {
                 const errText = await response.text();
